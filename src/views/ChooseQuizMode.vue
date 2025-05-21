@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps } from 'vue'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 import QuizModeLayout from '@/components/QuizModeLayout.vue'
 
 const props = defineProps({
@@ -9,15 +9,15 @@ const props = defineProps({
 
 console.log('Chosen quiz:', props.quiz)
 
-const router = useRouter()
-const backToHomePage = () => {
-  router.push('/')
-}
+// const router = useRouter()
+// const backToHomePage = () => {
+//   router.push('/')
+// }
 </script>
 
 <template>
   <div class="choose-quiz-mode-wrapper">
-    <div @click="backToHomePage" class="go-back"><span>&#8592; Back</span></div>
+    <!-- <div @click="backToHomePage" class="go-back"><span>&#8592; Back</span></div> -->
 
     <QuizModeLayout />
   </div>
@@ -30,7 +30,7 @@ const backToHomePage = () => {
 
 .go-back {
   position: absolute;
-  top: 3vh;
+  top: 10vh;
   left: 4vw;
 
   color: black;

@@ -1,11 +1,49 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useQuizStore } from '@/stores/quizStore'
 import { useRouter, useRoute } from 'vue-router'
 
 const quizStore = useQuizStore()
 const router = useRouter()
 const route = useRoute()
+
+const quizLayoutWrapper = ref(null)
+const backgroundImg = ref(null)
+
+const openPageAnimation = () => {
+  const el = quizLayoutWrapper.value
+  const img = backgroundImg.value
+
+  if (el) {
+    el.style.transition = 'left 1.5s ease-out'
+    el.style.left = '10vw'
+
+    if (img) {
+      img.style.transition = 'left 0.5s ease-out'
+      img.style.left = '80vw'
+    }
+  }
+}
+
+onMounted(() => {
+  setTimeout(() => {
+    openPageAnimation()
+  }, 1)
+
+  // openPageAnimation()
+})
+
+// onMounted(() => {
+//   const route = useRoute()
+
+//   if (route.path.endsWith('/choose-quiz-mode')) {
+//     requestAnimationFrame(() => {
+//       requestAnimationFrame(() => {
+//         openPageAnimation()
+//       })
+//     })
+//   }
+// })
 
 const goInfiniteMode = () => {
   quizStore.infiniteMode = true
@@ -19,16 +57,41 @@ const hovered = ref('')
 
 const quizName = route.params.quizName
 
+const nextPageAnimation = () => {
+  const el = quizLayoutWrapper.value
+  const img = backgroundImg.value
+
+  if (el) {
+    el.style.transition = 'left 0.5s ease-out'
+    el.style.left = '-100vw'
+
+    if (img) {
+      img.style.transition = 'left 1.5s ease-out'
+      img.style.left = '-35vw'
+    }
+  }
+}
+
 const startGame = () => {
-  router.push(`/${quizName}/quizzing`)
-  quizStore.isQuizInProgress = true
-  console.log('max errors', quizStore.maxErrors, typeof quizStore.maxErrors)
+  nextPageAnimation()
+
+  setTimeout(() => {
+    router.push(`/${quizName}/quizzing`)
+    quizStore.isQuizInProgress = true
+    console.log('max errors', quizStore.maxErrors, typeof quizStore.maxErrors)
+  }, 2000)
 }
 </script>
 
 <template>
   <div class="page-wrapper">
-    <div class="quiz-layout-wrapper">
+    <img
+      ref="backgroundImg"
+      id="background-image"
+      src="https://plus.unsplash.com/premium_vector-1711920037357-029f344f7cfc?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nzh8fHRyYXZlbHxlbnwwfHwwfHx8MA%3D%3D
+"
+    />
+    <div ref="quizLayoutWrapper" class="quiz-layout-wrapper">
       <div class="text-area">
         <h1>Choose your quiz mode!</h1>
 
@@ -70,7 +133,7 @@ const startGame = () => {
             class="pointer"
             id="infinite-mode-btn"
             :style="{
-              backgroundColor: quizStore.infiniteMode ? '#772e25' : 'inherit',
+              backgroundColor: quizStore.infiniteMode ? '#eb5d3d' : 'inherit',
               color: quizStore.infiniteMode ? 'white' : 'black',
             }"
             :disabled="quizStore.infiniteMode"
@@ -112,24 +175,43 @@ const startGame = () => {
 }
 
 .page-wrapper {
+  position: relative;
   height: 100vh;
-  background-image: url('https://www.transparenttextures.com/patterns/cartographer.png');
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  background-color: #749cd4;
+
+  overflow: hidden;
+}
+
+#background-image {
+  /* transform: scaleX(-1); */
+
+  position: absolute;
+  left: 90vw;
+  bottom: 0;
+  border-left: 0.5px solid #f1e2d6;
+  border-right: 0.5px solid #f1e2d6;
+
+  height: 100%;
 }
 
 .quiz-layout-wrapper {
+  position: absolute;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  width: 60vw;
+  left: 100vw;
 }
 
 .text-area {
   flex-grow: 1;
-  background-color: #edddd4;
-  background-image: none;
 
   text-align: center;
 
@@ -140,10 +222,11 @@ const startGame = () => {
 
   padding: 4vw 10vh;
 
-  background-color: #edddd4;
-  color: #283d3b;
-  border: 1px solid #772e25;
-  border-radius: 15px;
+  background-color: #f1e2d6;
+  color: black;
+  /* border: 1px solid #633851;
+   */
+  border-radius: 25px;
 }
 
 p {
@@ -154,10 +237,10 @@ p {
   border: none;
   border-radius: 25px;
 
-  min-width: max-content;
+  min-width: 8vw;
   margin: 0 1vw;
 
-  color: #772e25;
+  color: #eb5d3d;
   font-size: 1rem;
   font-weight: 500;
   padding: 0.5rem 1rem;
@@ -165,7 +248,7 @@ p {
 }
 
 #infinite-mode-btn {
-  border: 1px solid #772e25;
+  border: 1px solid #eb5d3d;
   border-radius: 25px;
 
   font-size: 24px;
@@ -197,6 +280,46 @@ li {
   margin-right: 1vw;
 }
 
+input[type='radio'] {
+  appearance: none;
+  position: relative;
+
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(0, 0, 0, 0.5);
+
+  /* opacity: 0.3; */
+}
+
+/* input[type='radio']:hover {
+  opacity: 0.5;
+} */
+
+input[type='radio']:checked::after {
+  content: '';
+  position: absolute;
+  top: 2.5px;
+  left: 2.5px;
+  width: 14px;
+  height: 14px;
+  background-color: #eb5d3d;
+  border-radius: 50%;
+  transition: all 0.2s ease-in;
+}
+
+input[type='radio']:not(:checked)::after {
+  content: '';
+  position: absolute;
+  top: 2.5px;
+  left: 2.5px;
+  width: 14px;
+  height: 14px;
+  background-color: white;
+  border-radius: 50%;
+  transition: all 0.2s ease-out;
+}
+
 #play-btn {
   margin: 2vh 0 2vh 3vw;
   padding: 1rem 2rem;
@@ -205,9 +328,9 @@ li {
   font-weight: 800;
   color: white;
 
-  background-color: #772e25;
+  background-color: #fab662;
 
-  border: 1px solid #edddd4;
+  border: 1px solid #f1e2d6;
   border-radius: 25px;
 
   cursor: pointer;

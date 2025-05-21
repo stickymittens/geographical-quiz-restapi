@@ -81,10 +81,12 @@ onMounted(() => {
     <div v-else>No errors</div>
 
     <!-- <div class="infinite-mode"></div> -->
-    <!-- 
-    <div>Play again</div>
 
-    <div>or choose other quizzes</div> -->
+    <div>
+      <p>Play the same quiz</p>
+      <p>Play teh same quiz with differet setting</p>
+      <p>Play another quiz</p>
+    </div>
   </div>
 </template>
 

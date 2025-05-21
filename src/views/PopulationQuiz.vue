@@ -62,7 +62,7 @@ const handleAnswerSelected = (selectedAnswer) => {
       isCorrect.value = null
       chosenOption.value = null
       generateNewQuestion()
-    }, 1000)
+    }, 500)
   }
 }
 

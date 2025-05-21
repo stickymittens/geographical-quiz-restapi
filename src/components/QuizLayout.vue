@@ -69,13 +69,29 @@ onMounted(() => {
     // Redirect to the stored route
     setTimeout(() => {
       router.push(redirectRoute)
-    })
+    }, 500)
   }
 })
 
 onUnmounted(() => {
   window.removeEventListener('beforeunload', handleBeforeUnload)
   window.removeEventListener('popstate', handleBackButton)
+})
+
+//OPEN PAGE ANIMATION
+const openPageAnimation = () => {
+  const el = shadowBox.value
+
+  if (el) {
+    el.style.transition = 'left 0.5s ease-out'
+    el.style.left = 'auto'
+  }
+}
+
+onMounted(() => {
+  setTimeout(() => {
+    openPageAnimation()
+  }, 1)
 })
 
 const props = defineProps({
@@ -94,32 +110,7 @@ const shadowBox = ref(null)
 
 // const incorrectsArray = ref([])
 
-// watch(
-//   () => props.isCorrect,
-//   (isCorrect) => {
-//     quizStore.questionIndex++
-//     console.log('Answer was:', isCorrect ? 'correct' : 'incorrect')
-//     // call your style logic here too if needed
-//     if (!shadowBox.value) return
-
-//     if (isCorrect === true) {
-//       // shadowBox.value.style.shadowBox = '0 0 10px 10px rgba(0, 250, 0, 0.4)'
-//       shadowBox.value.style.backgroundColor = 'green'
-//       setTimeout(() => {
-//         // shadowBox.value.style.shadowBox = 'none'
-//         shadowBox.value.style.backgroundColor = '#edddd4'
-//       }, 500)
-//     } else if (isCorrect === false) {
-//       // shadowBox.value.style.shadowBox = '0 0 10px 10px rgba(250, 0, 0, 0.4)'
-//       shadowBox.value.style.backgroundColor = 'red'
-//       errorsCount.value++
-//       setTimeout(() => {
-//         // shadowBox.value.style.shadowBox = 'none'
-//         shadowBox.value.style.backgroundColor = '#edddd4'
-//       }, 500)
-//     }
-//   },
-// )
+const answerBtns = ref(null)
 
 watch(
   () => [props.isCorrect, quizStore.isQuizInProgress],
@@ -128,13 +119,38 @@ watch(
 
     console.log('Answer was:', isCorrect ? 'correct' : 'incorrect')
 
+    // console.log(answers)
+
+    answerBtns.value = document.querySelectorAll('.answer-btn')
+
+    const answer1 = answerBtns.value[0]
+    const answer2 = answerBtns.value[1]
+
+    console.log(answer1, answer2)
+
     if (isQuizInProgress === true) {
       if (!shadowBox.value) return
 
-      shadowBox.value.style.backgroundColor = isCorrect ? 'green' : 'red'
+      if (props.chosenOption === 1) {
+        if (isCorrect === true) {
+          answer1.classList.add('answer-correct')
+        } else if (isCorrect === false) {
+          answer1.classList.add('answer-incorrect')
+        }
+      } else if (props.chosenOption === 2) {
+        if (isCorrect === true) {
+          answer2.classList.add('answer-correct')
+        } else if (isCorrect === false) {
+          answer2.classList.add('answer-incorrect')
+        }
+      }
+
       setTimeout(() => {
         if (shadowBox.value) {
-          shadowBox.value.style.backgroundColor = '#edddd4'
+          answer1.classList.remove('answer-correct')
+          answer1.classList.remove('answer-incorrect')
+          answer2.classList.remove('answer-correct')
+          answer2.classList.remove('answer-incorrect')
         }
       }, 500)
 
@@ -144,7 +160,7 @@ watch(
         if (shadowBox.value) {
           quizStore.questionIndex++
         }
-      }, 1000)
+      }, 500)
     }
 
     //UPDATES CORRECTLY
@@ -237,18 +253,35 @@ watch(
 
 <template>
   <div class="wrapper">
-    <div @click="backToHomePage" class="go-back"><span>&#8592; Back</span></div>
-    <div ref="shadowBox" class="text-area">
-      <h3 class="errors">Erorrs letf: {{ quizStore.maxErrors - quizStore.errorsCount }}</h3>
-      <h2 class="question-number">
-        Question {{ quizStore.questionIndex }} out of
-        {{ quizStore.infiniteMode ? '&#8734;' : quizStore.numberOfQuestions }}
-      </h2>
-      <h1 class="question">Which country has the bigger population?</h1>
+    <img
+      ref="backgroundImg"
+      id="background-image"
+      src="https://plus.unsplash.com/premium_vector-1711920037357-029f344f7cfc?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nzh8fHRyYXZlbHxlbnwwfHwwfHx8MA%3D%3D
+"
+    />
+    <div @click="backToHomePage" class="go-back">
+      <span>&#8592; Back to settings</span>
+    </div>
+
+    <div ref="shadowBox" class="shadow-box">
+      <div class="text-area">
+        <h3 class="errors">Erorrs left: {{ quizStore.maxErrors - quizStore.errorsCount }}</h3>
+        <h2 class="question-number">
+          Question {{ quizStore.questionIndex }} out of
+          {{ quizStore.infiniteMode ? '&#8734;' : quizStore.numberOfQuestions }}
+        </h2>
+        <h1 class="question">Which country has the bigger population?</h1>
+        <!-- text-area -->
+      </div>
 
       <ul class="answers">
-        <button @click="emit('answer-selected', 'answer1')">{{ answer1 }}</button>
-        <button @click="emit('answer-selected', 'answer2')">{{ answer2 }}</button>
+        <button class="answer-btn" @click="emit('answer-selected', 'answer1')">
+          {{ answer1 }}
+          <!-- a[0hkbup9i] and islands of suepr long words and some othe rcute islands -->
+        </button>
+        <button class="answer-btn" @click="emit('answer-selected', 'answer2')">
+          {{ answer2 }}
+        </button>
       </ul>
 
       <button
@@ -259,66 +292,101 @@ watch(
       >
         Save current score
       </button>
-      <!-- <p @click="nextQuestion" id="next">Next &#8594;</p> -->
+      <!-- shadow box -->
     </div>
+
+    <!-- page wrapper -->
   </div>
 </template>
 
 <style scoped>
+.wrapper {
+  position: relative;
+
+  height: 100vh;
+  width: 100vw;
+  background-color: #749cd4;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#background-image {
+  /* transform: scaleX(-1); */
+
+  position: absolute;
+  left: -45vw;
+  border-right: 0.5px solid #f1e2d6;
+
+  height: 100%;
+}
+
 .go-back {
   position: absolute;
-  top: 3vh;
-  left: 4vw;
+  bottom: 3vh;
+  left: 3vw;
 
   color: black;
 
   width: max-content;
-  background-color: #edddd4;
-  border: 1px solid #772e25;
-  border-radius: 55px;
+  background-color: #f1e2d6;
+  /* border: 1px solid #772e25; */
+  border-radius: 50px;
 
   padding: 0.5rem 1rem;
+  cursor: pointer;
 }
 
 .go-back span {
   width: 10vw;
 }
 
+.shadow-box {
+  position: absolute;
+  left: 100vw;
+  bottom: 50vh;
+
+  width: 50vw;
+  height: 30vh;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  /* background-color: aquamarine; */
+
+  background-color: none;
+}
+
 .text-area {
   position: relative;
-  max-width: 80vw;
 
-  flex-grow: 1;
-  background-color: #edddd4;
+  background-color: #f1e2d6;
   background-image: none;
 
   text-align: center;
 
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 1vh;
 
-  padding: 4vh 4vw 4vh 4vw;
+  padding: 1rem 2rem 2rem 2rem;
 
-  background-color: #edddd4;
+  background-color: #f1e2d6;
   color: #283d3b;
-  border: 1px solid #772e25;
-  border-radius: 15px;
+  border-radius: 25px;
 
   transition: background-color 1s ease-in-out;
+
+  box-sizing: border-box;
 }
 
-h3 {
+.errors {
   align-self: flex-end;
-  margin-bottom: 3vh;
+  color: #eb5d3d;
 
-  color: #772e25;
-  font-weight: 500;
-}
-
-h1 {
-  font-size: 200%;
+  margin-bottom: 1rem;
 }
 
 ul {
@@ -331,23 +399,84 @@ ul {
   width: 100%;
 }
 
-button {
-  border: 1px solid #772e25;
+.answers {
+  /* background-color: yellow; */
+  padding: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5vw;
+}
+
+.answer-btn {
+  flex-shrink: 0;
+
+  height: 8rem;
+  width: 25vw;
+
   border-radius: 25px;
-
-  font-size: 30px;
   padding: 0.5rem 1rem;
-  margin: 6vh 0;
-}
 
-button:hover {
-  text-decoration: underline;
-  text-decoration-color: #772e25;
-  text-decoration-thickness: 5%;
-}
+  background-color: #f1e2d6;
 
-#next {
-  align-self: flex-end;
   cursor: pointer;
+
+  border: 3px solid transparent;
+}
+
+.answer-btn:hover:not(.correct):not(.incorrect) {
+  border-color: #fab662; /* Yellow on hover if not correct/incorrect */
+}
+
+/* Correct answer state */
+.answer-btn.answer-correct {
+  border-color: #55b34bce !important;
+}
+
+/* Incorrect answer state */
+.answer-btn.answer-incorrect {
+  border-color: #f44336ce !important;
+}
+
+#infinity-button {
+  align-self: center;
+  width: max-content;
+  cursor: pointer;
+
+  border-radius: 50px;
+  border: none;
+
+  padding: 0.5rem 1rem;
+
+  background-color: #f1e2d6;
+
+  font-weight: 500;
+}
+
+#infinity-button:hover {
+  background-color: #fab662;
+  color: #f1e2d6;
+}
+
+/* RESPONSIVE FONT MANAGEMENT */
+h1 {
+  font-size: clamp(1.125rem, 1vw + 1vh, 1.75rem);
+}
+
+.question-number {
+  font-size: clamp(0.5rem, 1vw + 1vh, 1rem);
+}
+
+.errors {
+  font-size: clamp(0.5rem, 1vw + 1vh, 1rem);
+}
+
+.answer-btn {
+  font-size: clamp(1.125rem, 1vw + 1vh, 1.75rem);
+}
+
+#infinity-button {
+  font-size: clamp(0.5rem, 1vw + 1vh, 1rem);
 }
 </style>
