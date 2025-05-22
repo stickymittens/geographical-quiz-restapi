@@ -79,20 +79,20 @@ onUnmounted(() => {
 })
 
 //OPEN PAGE ANIMATION
-const openPageAnimation = () => {
-  const el = shadowBox.value
+// const openPageAnimation = () => {
+//   const el = shadowBox.value
 
-  if (el) {
-    el.style.transition = 'left 0.5s ease-out'
-    el.style.left = 'auto'
-  }
-}
+//   if (el) {
+//     el.style.transition = 'left 0.5s ease-out'
+//     el.style.left = 'auto'
+//   }
+// }
 
-onMounted(() => {
-  setTimeout(() => {
-    openPageAnimation()
-  }, 1)
-})
+// onMounted(() => {
+//   setTimeout(() => {
+//     openPageAnimation()
+//   }, 1)
+// })
 
 const props = defineProps({
   answer1: String,
@@ -126,7 +126,7 @@ watch(
     const answer1 = answerBtns.value[0]
     const answer2 = answerBtns.value[1]
 
-    console.log(answer1, answer2)
+    // console.log(answer1, answer2)
 
     if (isQuizInProgress === true) {
       if (!shadowBox.value) return
@@ -259,9 +259,6 @@ watch(
       src="https://plus.unsplash.com/premium_vector-1711920037357-029f344f7cfc?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nzh8fHRyYXZlbHxlbnwwfHwwfHx8MA%3D%3D
 "
     />
-    <div @click="backToHomePage" class="go-back">
-      <span>&#8592; Back to settings</span>
-    </div>
 
     <div ref="shadowBox" class="shadow-box">
       <div class="text-area">
@@ -281,6 +278,8 @@ watch(
         </button>
         <button class="answer-btn" @click="emit('answer-selected', 'answer2')">
           {{ answer2 }}
+          <!-- long name for testing -->
+          <!-- Saint Helena, Ascension and Tristan da Cunha Guinea-Bissau -->
         </button>
       </ul>
 
@@ -294,7 +293,7 @@ watch(
       </button>
       <!-- shadow box -->
     </div>
-
+    <button @click="backToHomePage" class="go-back">&#8592; Back to settings</button>
     <!-- page wrapper -->
   </div>
 </template>
@@ -310,6 +309,8 @@ watch(
   display: flex;
   justify-content: center;
   align-items: center;
+
+  overflow: hidden;
 }
 
 #background-image {
@@ -322,32 +323,13 @@ watch(
   height: 100%;
 }
 
-.go-back {
-  position: absolute;
-  bottom: 3vh;
-  left: 3vw;
-
-  color: black;
-
-  width: max-content;
-  background-color: #f1e2d6;
-  /* border: 1px solid #772e25; */
-  border-radius: 50px;
-
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-}
-
-.go-back span {
-  width: 10vw;
-}
-
 .shadow-box {
   position: absolute;
-  left: 100vw;
+  /* left: 100vw; */
+  left: auto;
   bottom: 50vh;
 
-  width: 50vw;
+  width: 44vw;
   height: 30vh;
 
   display: flex;
@@ -371,7 +353,7 @@ watch(
   flex-direction: column;
   gap: 1vh;
 
-  padding: 1rem 2rem 2rem 2rem;
+  padding: 2rem 2rem 3rem 2rem;
 
   background-color: #f1e2d6;
   color: #283d3b;
@@ -382,11 +364,17 @@ watch(
   box-sizing: border-box;
 }
 
+.question-number,
+.errors {
+  font-weight: 200;
+  font-style: italic;
+}
+
 .errors {
   align-self: flex-end;
   color: #eb5d3d;
 
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
 }
 
 ul {
@@ -406,7 +394,7 @@ ul {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 5vw;
+  gap: 2vw;
 }
 
 .answer-btn {
@@ -426,57 +414,87 @@ ul {
 }
 
 .answer-btn:hover:not(.correct):not(.incorrect) {
-  border-color: #fab662; /* Yellow on hover if not correct/incorrect */
+  border-color: #fab662;
 }
 
-/* Correct answer state */
 .answer-btn.answer-correct {
   border-color: #55b34bce !important;
 }
 
-/* Incorrect answer state */
 .answer-btn.answer-incorrect {
   border-color: #f44336ce !important;
 }
 
-#infinity-button {
-  align-self: center;
+#infinity-button,
+.go-back {
   width: max-content;
-  cursor: pointer;
+
+  color: black;
+  background-color: #f1e2d6;
 
   border-radius: 50px;
   border: none;
 
   padding: 0.5rem 1rem;
+  margin-top: 0;
+  margin-bottom: 0;
+  transition:
+    padding 0.3s ease,
+    margin 0.3s ease;
 
-  background-color: #f1e2d6;
+  cursor: pointer;
+}
+
+#infinity-button {
+  align-self: center;
+  border: 0.5px solid #fab662;
+}
+
+.go-back {
+  position: absolute;
+  bottom: 3vh;
+  left: 3vw;
+}
+
+#infinity-button:hover,
+.go-back:hover {
+  background-color: #fab662;
+  color: #f1e2d6;
+
+  padding-left: calc(1rem + 1vw);
+  padding-right: calc(1rem + 1vw);
+
+  margin-top: -0.5rem;
+  margin-bottom: -0.5rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 
   font-weight: 500;
 }
 
-#infinity-button:hover {
-  background-color: #fab662;
-  color: #f1e2d6;
-}
-
-/* RESPONSIVE FONT MANAGEMENT */
+/* RESPONSIVE FONT MANAGEMENT  */
 h1 {
-  font-size: clamp(1.125rem, 1vw + 1vh, 1.75rem);
-}
-
-.question-number {
-  font-size: clamp(0.5rem, 1vw + 1vh, 1rem);
-}
-
-.errors {
-  font-size: clamp(0.5rem, 1vw + 1vh, 1rem);
+  font-size: clamp(1.3rem, 1.5vw + 1.5vh, 3.2rem);
 }
 
 .answer-btn {
-  font-size: clamp(1.125rem, 1vw + 1vh, 1.75rem);
+  font-size: clamp(1.2rem, 1.5vw + 0.5vh, 2.5rem);
 }
 
-#infinity-button {
-  font-size: clamp(0.5rem, 1vw + 1vh, 1rem);
+.errors,
+.question-number,
+#infinity-button,
+.go-back {
+  font-size: clamp(0.95rem, 1.2vw + 0.4vh, 2.4rem);
+}
+
+@media (max-width: 768px) {
+  .shadow-box {
+    width: 90vw;
+  }
+
+  .answer-btn {
+    width: 44vw;
+  }
 }
 </style>

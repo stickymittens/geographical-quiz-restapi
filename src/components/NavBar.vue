@@ -43,7 +43,7 @@ function homePageBtn() {
   background-color: #f1e2d6;
   color: #633851;
 
-  font-size: 18px;
+  font-size: clamp(1rem, 1vw + 0.5vh, 4.5rem);
 }
 
 ul {
@@ -56,10 +56,6 @@ ul {
   gap: 3vw;
 }
 
-li {
-  font-weight: 450;
-}
-
 li:hover {
   color: #eb5d3d;
 }
@@ -67,5 +63,8 @@ li:hover {
 #home-page {
   position: absolute;
   left: 5vw;
+}
+
+@media (max-width: 768px) {
 }
 </style>

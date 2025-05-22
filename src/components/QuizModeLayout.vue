@@ -10,28 +10,28 @@ const route = useRoute()
 const quizLayoutWrapper = ref(null)
 const backgroundImg = ref(null)
 
-const openPageAnimation = () => {
-  const el = quizLayoutWrapper.value
-  const img = backgroundImg.value
+// const openPageAnimation = () => {
+//   const el = quizLayoutWrapper.value
+//   const img = backgroundImg.value
 
-  if (el) {
-    el.style.transition = 'left 1.5s ease-out'
-    el.style.left = '10vw'
+//   if (el) {
+//     el.style.transition = 'left 1.5s ease-out'
+//     el.style.left = '10vw'
 
-    if (img) {
-      img.style.transition = 'left 0.5s ease-out'
-      img.style.left = '80vw'
-    }
-  }
-}
+//     if (img) {
+//       img.style.transition = 'left 0.5s ease-out'
+//       img.style.left = '80vw'
+//     }
+//   }
+// }
 
-onMounted(() => {
-  setTimeout(() => {
-    openPageAnimation()
-  }, 1)
+// onMounted(() => {
+//   setTimeout(() => {
+//     openPageAnimation()
+//   }, 1)
 
-  // openPageAnimation()
-})
+//   // openPageAnimation()
+// })
 
 // onMounted(() => {
 //   const route = useRoute()
@@ -57,29 +57,29 @@ const hovered = ref('')
 
 const quizName = route.params.quizName
 
-const nextPageAnimation = () => {
-  const el = quizLayoutWrapper.value
-  const img = backgroundImg.value
+// const nextPageAnimation = () => {
+//   const el = quizLayoutWrapper.value
+//   const img = backgroundImg.value
 
-  if (el) {
-    el.style.transition = 'left 0.5s ease-out'
-    el.style.left = '-100vw'
+//   if (el) {
+//     el.style.transition = 'left 0.5s ease-out'
+//     el.style.left = '-100vw'
 
-    if (img) {
-      img.style.transition = 'left 1.5s ease-out'
-      img.style.left = '-35vw'
-    }
-  }
-}
+//     if (img) {
+//       img.style.transition = 'left 1.5s ease-out'
+//       img.style.left = '-35vw'
+//     }
+//   }
+// }
 
 const startGame = () => {
-  nextPageAnimation()
+  // nextPageAnimation()
 
   setTimeout(() => {
     router.push(`/${quizName}/quizzing`)
     quizStore.isQuizInProgress = true
     console.log('max errors', quizStore.maxErrors, typeof quizStore.maxErrors)
-  }, 2000)
+  }, 100)
 }
 </script>
 
@@ -131,7 +131,7 @@ const startGame = () => {
           or go
           <button
             class="pointer"
-            id="infinite-mode-btn"
+            id="infinity-mode-btn"
             :style="{
               backgroundColor: quizStore.infiniteMode ? '#eb5d3d' : 'inherit',
               color: quizStore.infiniteMode ? 'white' : 'black',
@@ -144,19 +144,19 @@ const startGame = () => {
 
         <ul>
           <li>
-            <label class="pointer label">
+            <label class="pointer label errors">
               <input type="radio" v-model="quizStore.maxErrors" value="0" class="radio" />
               No errors
             </label>
           </li>
           <li>
-            <label class="pointer label">
+            <label class="pointer label errors">
               <input type="radio" v-model="quizStore.maxErrors" value="3" class="radio" />
               3 errors
             </label>
           </li>
           <li>
-            <label class="pointer label">
+            <label class="pointer label errors">
               <input type="radio" v-model="quizStore.maxErrors" value="5" class="radio" />
               5 errors
             </label>
@@ -205,22 +205,31 @@ const startGame = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0;
 
-  width: 60vw;
-  left: 100vw;
+  width: max-content;
+
+  /* left: 100vw; */
+  left: auto;
+
+  /* background-color: pink; */
 }
 
 .text-area {
-  flex-grow: 1;
+  /* flex-grow: 1; */
 
   text-align: center;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5vh;
+  gap: calc(1.5vw + 1vh);
 
-  padding: 4vw 10vh;
+  padding-top: 5vh;
+  padding-bottom: 5vh;
+
+  padding-left: 5vw;
+  padding-right: 5vw;
 
   background-color: #f1e2d6;
   color: black;
@@ -229,30 +238,24 @@ const startGame = () => {
   border-radius: 25px;
 }
 
-p {
-  font-size: 24px;
-}
-
 #number-of-questions-input {
   border: none;
   border-radius: 25px;
 
-  min-width: 8vw;
+  width: 12ch;
   margin: 0 1vw;
 
   color: #eb5d3d;
-  font-size: 1rem;
   font-weight: 500;
   padding: 0.5rem 1rem;
   text-align: center;
 }
 
-#infinite-mode-btn {
+#infinity-mode-btn {
   border: 1px solid #eb5d3d;
   border-radius: 25px;
 
-  font-size: 24px;
-  padding: 0.5rem 1rem;
+  padding: 0.5vh 1vw;
   margin: 0 1vw;
 }
 
@@ -265,10 +268,6 @@ ul {
 
   display: flex;
   gap: 3vw;
-}
-
-li {
-  font-size: 20px;
 }
 
 .label {
@@ -321,18 +320,77 @@ input[type='radio']:not(:checked)::after {
 }
 
 #play-btn {
-  margin: 2vh 0 2vh 3vw;
+  margin-left: 3vw;
   padding: 1rem 2rem;
 
-  font-size: 2rem;
   font-weight: 800;
   color: white;
 
   background-color: #fab662;
 
   border: 1px solid #f1e2d6;
-  border-radius: 25px;
+  border-radius: clamp(25px, 5vw, 48px);
 
   cursor: pointer;
+}
+
+/* RESPONSIVE FONT MANAGEMENT */
+h1 {
+  font-size: clamp(1.4rem, 1.75vw + 1.75vh, 3.5rem);
+}
+
+p {
+  font-size: clamp(1.2rem, 1.5vw + 0.5vh, 2.5rem);
+}
+
+#number-of-questions-input {
+  font-size: clamp(0.87rem, 0.75vw + 0.75vh, 1.5rem);
+}
+
+input::placeholder {
+  font-size: clamp(0.85rem, 0.65vw + 0.65vh, 1.2rem);
+  font-style: italic;
+}
+
+#infinity-mode-btn {
+  font-size: clamp(1.2rem, 1.5vw + 0.5vh, 2.5rem);
+}
+
+.errors {
+  font-size: clamp(0.95rem, 1.2vw + 0.4vh, 2.4rem);
+}
+
+#play-btn {
+  font-size: clamp(1.3rem, 1.5vw + 1.5vh, 3.2rem);
+}
+
+/* MOBILE DEVICES */
+@media (max-width: 768px) {
+  .quiz-layout-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 2vh;
+  }
+
+  .text-area {
+    gap: 3vh;
+
+    padding-left: 7vw;
+    padding-right: 7vw;
+  }
+
+  /* errors ul  */
+  ul {
+    gap: 5vw;
+  }
+
+  #infinity-mode-btn {
+    padding: 0.5rem;
+  }
+
+  #play-btn {
+    margin-left: 0;
+  }
 }
 </style>
