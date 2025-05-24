@@ -9,9 +9,11 @@ function homePageBtn() {
   if (quizStore.isQuizInProgress) {
     const confirmLeave = confirm('You will lose all your progress. Are you sure?')
     if (!confirmLeave) {
-      window.history.pushState(null, '', window.location.href)
+      window.history.pushState(history.state, '', window.location.href)
       return
     }
+    quizStore.resetQuizStore()
+  } else {
     quizStore.resetQuizStore()
   }
 
@@ -19,7 +21,10 @@ function homePageBtn() {
     // Already on home — force reload
     window.location.reload()
   } else {
-    router.replace('/')
+    sessionStorage.setItem('forceHomeReload', 'true')
+    router.replace('/').then(() => {
+      window.history.pushState(history.state, '', window.location.href)
+    })
   }
 }
 </script>

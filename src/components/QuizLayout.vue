@@ -11,39 +11,50 @@ import { onMounted, onUnmounted } from 'vue'
 
 const quizStore = useQuizStore()
 
-//NAVIGATING BACK
 const router = useRouter()
 const route = useRoute()
 
 const quizName = route.params.quizName
 
-const backToHomePage = () => {
-  router.push(`/${quizName}/choose-quiz-mode`)
-
-  //Resetting quizStore
-  quizStore.resetQuizStore()
-}
-
-//Handling browser refresh/back buttons
+//Handling browser refresh, close, or navigate away
 function handleBeforeUnload(event) {
   if (quizStore.isQuizInProgress) {
     event.preventDefault()
-    event.returnValue = '' // Required for modern browsers
+    event.returnValue = ''
 
-    quizStore.resetQuizStore()
-
-    localStorage.setItem('redirectRoute', `/${quizName}/choose-quiz-mode`)
+    localStorage.setItem('decidedToLeave', 'true')
   }
 }
 
+onMounted(() => {
+  // Check if user decided to leave
+  const decidedToLeave = localStorage.getItem('decidedToLeave')
+  if (decidedToLeave === 'true') {
+    quizStore.resetQuizStore()
+    localStorage.removeItem('decidedToLeave')
+
+    // Redirect after resetting quiz
+    router.replace(`/${quizName}/choose-quiz-mode`)
+    return // optional: prevent further redirect logic this time
+  }
+
+  // If there's a saved redirect route in localStorage, navigate to it
+  const redirectRoute = localStorage.getItem('redirectRoute')
+  if (redirectRoute) {
+    localStorage.removeItem('redirectRoute')
+    router.replace(redirectRoute)
+  }
+})
+
+//added handleBack to teh Back to settings btn
 function handleBackButton() {
   if (quizStore.isQuizInProgress) {
     const confirmLeave = confirm('You will lose all your progress. Are you sure?')
     if (confirmLeave) {
       quizStore.resetQuizStore()
-      router.push(`/${quizName}/choose-quiz-mode`)
+      router.replace(`/${quizName}/choose-quiz-mode`)
     } else {
-      window.history.pushState(null, '', window.location.href)
+      window.history.pushState(history.state, '', window.location.href)
     }
   } else {
     router.replace('/')
@@ -53,23 +64,8 @@ function handleBackButton() {
 onMounted(() => {
   if (quizStore.isQuizInProgress) {
     window.addEventListener('beforeunload', handleBeforeUnload)
-    window.history.pushState(null, '', window.location.href)
+    window.history.pushState(history.state, '', window.location.href)
     window.addEventListener('popstate', handleBackButton)
-  }
-})
-
-onMounted(() => {
-  // If there's a saved redirect route in localStorage, navigate to it
-  const redirectRoute = localStorage.getItem('redirectRoute')
-
-  if (redirectRoute) {
-    // Clear the saved route after using it
-    localStorage.removeItem('redirectRoute')
-
-    // Redirect to the stored route
-    setTimeout(() => {
-      router.push(redirectRoute)
-    }, 500)
   }
 })
 
@@ -117,7 +113,9 @@ watch(
   ([isCorrect, isQuizInProgress]) => {
     if (isCorrect === null) return // Only act when there's a valid answer
 
-    console.log('Answer was:', isCorrect ? 'correct' : 'incorrect')
+    if (isQuizInProgress === true) {
+      console.log('Answer was:', isCorrect ? 'correct' : 'incorrect')
+    }
 
     // console.log(answers)
 
@@ -136,14 +134,12 @@ watch(
           answer1.classList.add('answer-correct')
         } else if (isCorrect === false) {
           answer1.classList.add('answer-incorrect')
-          console.log(quizStore.incorrectsArray)
         }
       } else if (props.chosenOption === 2) {
         if (isCorrect === true) {
           answer2.classList.add('answer-correct')
         } else if (isCorrect === false) {
           answer2.classList.add('answer-incorrect')
-          console.log(quizStore.incorrectsArray)
         }
       }
 
@@ -276,7 +272,10 @@ watch(
 
     <div ref="shadowBox" class="shadow-box">
       <div class="text-area">
-        <h3 class="errors">Erorrs left: {{ quizStore.maxErrors - quizStore.errorsCount }}</h3>
+        <h3 v-if="quizStore.maxErrors !== '0'" class="errors">
+          Errors left: {{ quizStore.maxErrors - quizStore.errorsCount }}
+        </h3>
+        <h3 v-else class="errors">No errors mode</h3>
         <h2 class="question-number">
           Question {{ quizStore.questionIndex }} out of
           {{ quizStore.infiniteMode ? '&#8734;' : quizStore.numberOfQuestions }}
@@ -288,7 +287,7 @@ watch(
       <ul class="answers">
         <button class="answer-btn" @click="emit('answer-selected', 'answer1')">
           {{ answer1 }}
-          <!-- a[0hkbup9i] and islands of suepr long words and some othe rcute islands -->
+          <!-- Saint Helena, Ascension and Tristan da Cunha Guinea-Bissau -->
         </button>
         <button class="answer-btn" @click="emit('answer-selected', 'answer2')">
           {{ answer2 }}
@@ -307,7 +306,7 @@ watch(
       </button>
       <!-- shadow box -->
     </div>
-    <button @click="backToHomePage" class="go-back">&#8592; Back to settings</button>
+    <button @click="handleBackButton" class="go-back">&#8592; Back to settings</button>
     <!-- page wrapper -->
   </div>
 </template>

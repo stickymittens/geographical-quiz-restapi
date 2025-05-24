@@ -4,31 +4,86 @@ import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
 import { ref, onMounted, onUnmounted } from 'vue'
 
+const quizStore = useQuizStore()
+
 const route = useRoute()
+const router = useRouter()
 const endGame = route.params.endGame
 
-const router = useRouter()
+//Handling browser refresh, close, or navigate away
+function handleBeforeUnload(event) {
+  event.preventDefault()
+  event.returnValue = ''
 
-function handleBackButton() {
-  quizStore.resetQuizStore()
-  // Force navigation to main page
-  router.replace('/')
+  // Flag to reset quiz after reload
+  localStorage.setItem('decidedToLeave', 'true')
 }
 
 onMounted(() => {
-  // Push a dummy entry to history
-  window.history.pushState(null, '', window.location.href)
+  if (localStorage.getItem('decidedToLeave') === 'true') {
+    quizStore.resetQuizStore()
+    localStorage.removeItem('decidedToLeave')
+    router.replace('/')
+    return
+  }
+})
 
-  // Listen for browser back button
+function handleBackButton() {
+  quizStore.resetQuizStore()
+
+  // Replace current route with home
+  sessionStorage.setItem('forceHomeReload', 'true')
+  router.replace('/').then(() => {
+    window.history.pushState(history.state, '', window.location.href)
+  })
+
+  // Push dummy state so browser "back" does nothing from now on
+  setTimeout(() => {
+    window.history.pushState(history.state, '', window.location.href)
+  }, 100)
+}
+
+onMounted(() => {
+  window.addEventListener('beforeunload', handleBeforeUnload)
+  window.history.pushState(history.state, '', window.location.href)
   window.addEventListener('popstate', handleBackButton)
 })
 
 onUnmounted(() => {
-  // Clean up the listener
+  window.removeEventListener('beforeunload', handleBeforeUnload)
   window.removeEventListener('popstate', handleBackButton)
 })
 
-const quizStore = useQuizStore()
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//space for my thoughts
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 //funct changing colors of the correct/incorrect option
 const option1Refs = ref([])

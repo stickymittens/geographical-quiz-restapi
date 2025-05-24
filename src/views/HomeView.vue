@@ -8,95 +8,109 @@ const backgroundImg = ref(null)
 const quizzesWrapper = ref(null)
 const question = ref(null)
 
-// const openPageAnimation = () => {
-//   const el1 = backgroundImg.value
-//   if (el1) {
-//     el1.style.transition = 'left 1s ease'
-//     el1.style.transitionDelay = '0.5s'
-//     el1.style.left = '-25vw'
-//   }
+const buttonsDisabled = ref(null)
 
-//   const el2 = quizzesWrapper.value
-//   if (el2) {
-//     el2.style.transition = 'width 1s ease'
-//     el2.style.transitionDelay = '0.5s'
-//     el2.style.width = '65vw'
-//   }
+//from endGame + remember to add teh same forceHomeReload in other components for thsi to refresh
+onMounted(() => {
+  const cameFromRedirect = sessionStorage.getItem('forceHomeReload')
 
-//   const elements = quizzesWrapper.value?.children
-//   if (elements) {
-//     const firstChild = elements[0]
-//     firstChild.style.transition = 'opacity 1s ease'
-//     firstChild.style.transitionDelay = '2.6s'
-//     firstChild.style.opacity = 1
+  if (cameFromRedirect === 'true') {
+    sessionStorage.removeItem('forceHomeReload')
+    window.location.reload()
+  }
+})
 
-//     Array.from(elements)
-//       .slice(1)
-//       .forEach((element, index) => {
-//         setTimeout(() => {
-//           setTimeout(
-//             () => {
-//               element.style.transition = 'opacity 0.5s ease'
-//               element.style.opacity = 1
-//             },
-//             (index + 1) * 200,
-//           )
-//         }, 1600)
-//       })
-//   }
-// }
+const openPageAnimation = () => {
+  const el1 = backgroundImg.value
+  if (el1) {
+    el1.style.transition = 'left 1s ease'
+    el1.style.transitionDelay = '0.5s'
+    el1.style.left = '-25vw'
+  }
 
-// //ANIMATION RELOADS EVERY TIME THIS VIEW IS OPEN/NAVIGATED BACK TO
-// onMounted(() => {
-//   const route = useRoute()
+  const el2 = quizzesWrapper.value
+  if (el2) {
+    el2.style.transition = 'width 1s ease'
+    el2.style.transitionDelay = '0.5s'
+    el2.style.width = '65vw'
+  }
 
-//   if (route.path === '/') {
-//     requestAnimationFrame(() => {
-//       requestAnimationFrame(() => {
-//         openPageAnimation()
-//       })
-//     })
-//   }
-// })
+  const elements = quizzesWrapper.value?.children
+  if (elements) {
+    const firstChild = elements[0]
+    firstChild.style.transition = 'opacity 1s ease'
+    firstChild.style.transitionDelay = '2.6s'
+    firstChild.style.opacity = 1
 
-// const nextPageAnimation = () => {
-//   const elements = quizzesWrapper.value?.children
+    Array.from(elements)
+      .slice(1)
+      .forEach((element, index) => {
+        setTimeout(() => {
+          setTimeout(
+            () => {
+              element.style.transition = 'opacity 0.5s ease'
+              element.style.opacity = 1
+            },
+            (index + 1) * 200,
+            // (index + 1) * 1000,
+          )
+        }, 1600)
+      })
+  }
+}
 
-//   if (elements) {
-//     const firstChild = elements[0]
-//     firstChild.style.transition = 'opacity 1s ease'
-//     firstChild.style.opacity = 0
+//ANIMATION RELOADS EVERY TIME THIS VIEW IS OPEN/NAVIGATED BACK TO
+onMounted(() => {
+  const route = useRoute()
 
-//     Array.from(elements)
-//       .slice(1)
-//       .forEach((element, index) => {
-//         setTimeout(() => {
-//           setTimeout(
-//             () => {
-//               element.style.transition = 'opacity 0.5s ease'
-//               element.style.opacity = 0
-//             },
-//             (index + 1) * 200,
-//           )
-//         }, 0)
-//       })
-//   }
+  if (route.path === '/') {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        openPageAnimation()
+      })
+    })
+  }
+})
 
-//   const el = quizzesWrapper.value
-//   if (el) {
-//     el.style.transition = 'width 1s ease'
-//     el.style.transitionDelay = '1.75s'
-//     el.style.width = '100vw'
-//   }
-// }
+const nextPageAnimation = () => {
+  const elements = quizzesWrapper.value?.children
+
+  if (elements) {
+    const firstChild = elements[0]
+    firstChild.style.transition = 'opacity 1s ease'
+    firstChild.style.opacity = 0
+
+    Array.from(elements)
+      .slice(1)
+      .forEach((element, index) => {
+        setTimeout(() => {
+          setTimeout(
+            () => {
+              element.style.transition = 'opacity 0.5s ease'
+              element.style.opacity = 0
+            },
+            (index + 1) * 200,
+          )
+        }, 0)
+      })
+  }
+
+  const el = quizzesWrapper.value
+  if (el) {
+    el.style.transition = 'width 1s ease'
+    el.style.transitionDelay = '1.75s'
+    el.style.width = '100vw'
+  }
+}
 
 const chooseQuiz = (quizName) => {
-  // nextPageAnimation()
+  buttonsDisabled.value = true
+  nextPageAnimation()
 
   setTimeout(() => {
     router.push(`/${quizName}/choose-quiz-mode`)
-    // }, 2000)
-  }, 1)
+  }, 2000)
+  // }, 1)
 }
 </script>
 
@@ -116,10 +130,18 @@ const chooseQuiz = (quizName) => {
         <span class="line-break"> </span>
         are you taking today?
       </h1>
-      <div @click="chooseQuiz('capitals')" class="quiz">Capitals</div>
-      <div @click="chooseQuiz('continents')" class="quiz">Continents</div>
-      <div @click="chooseQuiz('population')" class="quiz">Population</div>
-      <div @click="chooseQuiz('language')" class="quiz">Language</div>
+      <div @click="chooseQuiz('capitals')" :class="['quiz', { disabled: buttonsDisabled }]">
+        Capitals
+      </div>
+      <div @click="chooseQuiz('continents')" :class="['quiz', { disabled: buttonsDisabled }]">
+        Continents
+      </div>
+      <div @click="chooseQuiz('population')" :class="['quiz', { disabled: buttonsDisabled }]">
+        Population
+      </div>
+      <div @click="chooseQuiz('language')" :class="['quiz', { disabled: buttonsDisabled }]">
+        Language
+      </div>
     </div>
   </div>
 </template>
@@ -162,8 +184,8 @@ img {
   right: 0;
 
   height: 100%;
-  /* width: 0; */
-  width: 65vw;
+  width: 0;
+  /* width: 65vw; */
 
   display: flex;
   flex-direction: column;
@@ -179,8 +201,8 @@ img {
 h1 {
   z-index: 10;
 
-  /* opacity: 0; */
-  opacity: 1;
+  opacity: 0;
+  /* opacity: 1; */
   /* font-family: 'Caveat Brush', cursive; */
 
   text-align: center;
@@ -202,8 +224,8 @@ h1 {
 .quiz {
   z-index: 10;
 
-  /* opacity: 0; */
-  opacity: 1;
+  opacity: 0;
+  /* opacity: 1; */
 
   color: black;
   background-color: #f1e2d6;
@@ -225,6 +247,13 @@ h1 {
 .quiz:hover {
   color: white;
   background-color: #fab662;
+}
+
+.quiz.disabled {
+  pointer-events: none; /* prevent clicks */
+  /* opacity: 0.6; */
+  user-select: none; /* prevent text selection */
+  cursor: not-allowed; /* show disabled cursor */
 }
 
 /* RESPONSIVE FONT MANAGEMENT */

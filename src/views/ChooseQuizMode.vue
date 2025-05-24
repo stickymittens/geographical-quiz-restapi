@@ -2,6 +2,7 @@
 import { defineProps } from 'vue'
 // import { useRouter } from 'vue-router'
 import QuizModeLayout from '@/components/QuizModeLayout.vue'
+import { useQuizStore } from '@/stores/quizStore'
 
 const props = defineProps({
   quiz: String,
@@ -13,6 +14,15 @@ console.log('Chosen quiz:', props.quiz)
 // const backToHomePage = () => {
 //   router.push('/')
 // }
+
+//TETSING THE REFRESH AND BACK
+const quizStore = useQuizStore()
+console.log(
+  'question index: ',
+  quizStore.questionIndex,
+  'errors left: ',
+  quizStore.maxErrors - quizStore.errorsCount,
+)
 </script>
 
 <template>
