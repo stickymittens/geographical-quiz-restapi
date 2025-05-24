@@ -54,10 +54,7 @@ export const useQuizStore = defineStore('quiz', () => {
         // console.log(selectedA, selectedB)
         console.log(selectedA.population > selectedB.population)
       } else {
-        setTimeout(() => {
-          // console.log(selectedA, selectedB)
-          console.log(selectedA.population > selectedB.population)
-        }, 1000)
+        console.log(selectedA.population > selectedB.population)
       }
 
       return { a: selectedA, b: selectedB }

@@ -78,7 +78,6 @@ const startGame = () => {
   setTimeout(() => {
     router.push(`/${quizName}/quizzing`)
     quizStore.isQuizInProgress = true
-    console.log('max errors', quizStore.maxErrors, typeof quizStore.maxErrors)
   }, 100)
 }
 </script>

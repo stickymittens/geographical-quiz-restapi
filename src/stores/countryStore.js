@@ -24,7 +24,7 @@ export const useCountryStore = defineStore('country', {
           (longest, country) => (country.name.length > longest.length ? country.name : longest),
           '',
         )
-        console.log(`Longest country name: "${longest}" (${longest.length} characters)`)
+        // console.log(`Longest country name: "${longest}" (${longest.length} characters)`)
       } catch (error) {
         console.error('Error fetching countries:', error)
       }

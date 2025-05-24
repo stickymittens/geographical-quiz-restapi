@@ -136,12 +136,14 @@ watch(
           answer1.classList.add('answer-correct')
         } else if (isCorrect === false) {
           answer1.classList.add('answer-incorrect')
+          console.log(quizStore.incorrectsArray)
         }
       } else if (props.chosenOption === 2) {
         if (isCorrect === true) {
           answer2.classList.add('answer-correct')
         } else if (isCorrect === false) {
           answer2.classList.add('answer-incorrect')
+          console.log(quizStore.incorrectsArray)
         }
       }
 
@@ -196,42 +198,54 @@ watch(
       if (quizStore.infiniteMode === true) {
         if (quizStore.maxErrors === '0') {
           if (errorsCount >= 1) {
-            console.log('inf - you lost')
             quizStore.isQuizInProgress = false
-            router.push('/you-lost')
+            setTimeout(() => {
+              router.push('/you-lost')
+            }, 500)
           }
         } else {
           if (errorsCount >= quizStore.maxErrors) {
-            console.log('inf - you lost')
             quizStore.isQuizInProgress = false
-            router.push('/you-lost')
+            setTimeout(() => {
+              router.push('/you-lost')
+            }, 500)
           }
         }
       } else if (quizStore.infiniteMode === false) {
         if (quizStore.maxErrors === '0') {
           if (errorsCount >= 1) {
-            console.log('non - 0 - you lost')
             quizStore.isQuizInProgress = false
-            router.push('/you-lost')
+            setTimeout(() => {
+              router.push('/you-lost')
+            }, 500)
           } else if (quizStore.numberOfQuestions === questionIndex - 1) {
-            console.log('non - 0 - you won')
-            router.push('/you-won')
+            setTimeout(() => {
+              quizStore.isQuizInProgress = false
+              router.push('/you-won')
+            }, 500)
           }
         } else if (quizStore.maxErrors > 0) {
           if (errorsCount >= quizStore.maxErrors) {
-            console.log('non - >0 - you lost')
-            quizStore.isQuizInProgress = false
-            router.push('/you-lost')
+            setTimeout(() => {
+              quizStore.isQuizInProgress = false
+              router.push('/you-lost')
+            }, 500)
           } else if (quizStore.numberOfQuestions === questionIndex - 1) {
-            console.log('non - >0 -  you won')
-            quizStore.isQuizInProgress = false
-            router.push('/you-won')
+            setTimeout(() => {
+              quizStore.isQuizInProgress = false
+              router.push('/you-won')
+            }, 500)
           }
         }
       }
-
-      //MAX ERRORS === 0 WORKS WELL
     }
+
+    // setTimeout(() => {
+    //   endGame()
+    //   // this value has to stay bigger than teh delay for generating a new pair as it stops the isQuizInProgress and when a new pair is generated
+    //   //  - idk why but when its below the last incorerct answer is added twice to an array
+    // }, 450)
+
     endGame()
   },
 )

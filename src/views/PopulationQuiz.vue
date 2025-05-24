@@ -54,7 +54,7 @@ const handleAnswerSelected = (selectedAnswer) => {
     }
     quizStore.firstQuestion = false
   } else {
-    console.log('Answer selected:', selectedAnswer)
+    // console.log('Answer selected:', selectedAnswer)
 
     // quizStore.firstQuestion = true
 
