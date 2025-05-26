@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useQuizStore } from '@/stores/quizStore'
 import { useRouter, useRoute } from 'vue-router'
+import QuizButtons from './QuizButtons.vue'
 
 const quizStore = useQuizStore()
 const router = useRouter()
@@ -10,40 +11,40 @@ const route = useRoute()
 const quizLayoutWrapper = ref(null)
 const backgroundImg = ref(null)
 
-// const openPageAnimation = () => {
-//   const el = quizLayoutWrapper.value
-//   const img = backgroundImg.value
+const openPageAnimation = () => {
+  const el = quizLayoutWrapper.value
+  const img = backgroundImg.value
 
-//   if (el) {
-//     el.style.transition = 'left 1.5s ease-out'
-//     el.style.left = '10vw'
+  if (el) {
+    el.style.transition = 'left 1.5s ease-out'
+    el.style.left = '25vw'
 
-//     if (img) {
-//       img.style.transition = 'left 0.5s ease-out'
-//       img.style.left = '80vw'
-//     }
-//   }
-// }
+    if (img) {
+      img.style.transition = 'left 0.5s ease-out'
+      img.style.left = '80vw'
+    }
+  }
+}
 
-// onMounted(() => {
-//   setTimeout(() => {
-//     openPageAnimation()
-//   }, 1)
+onMounted(() => {
+  setTimeout(() => {
+    openPageAnimation()
+  }, 1)
 
-//   // openPageAnimation()
-// })
+  // openPageAnimation()
+})
 
-// onMounted(() => {
-//   const route = useRoute()
+onMounted(() => {
+  const route = useRoute()
 
-//   if (route.path.endsWith('/choose-quiz-mode')) {
-//     requestAnimationFrame(() => {
-//       requestAnimationFrame(() => {
-//         openPageAnimation()
-//       })
-//     })
-//   }
-// })
+  if (route.path.endsWith('/choose-quiz-mode')) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        openPageAnimation()
+      })
+    })
+  }
+})
 
 const goInfiniteMode = () => {
   quizStore.infiniteMode = true
@@ -57,28 +58,28 @@ const hovered = ref('')
 
 const quizName = route.params.quizName
 
-// const nextPageAnimation = () => {
-//   const el = quizLayoutWrapper.value
-//   const img = backgroundImg.value
+const nextPageAnimation = () => {
+  const el = quizLayoutWrapper.value
+  const img = backgroundImg.value
 
-//   if (el) {
-//     el.style.transition = 'left 0.5s ease-out'
-//     el.style.left = '-100vw'
+  if (el) {
+    el.style.transition = 'left 1s ease-out'
+    el.style.left = '-100vw'
 
-//     if (img) {
-//       img.style.transition = 'left 1.5s ease-out'
-//       img.style.left = '-35vw'
-//     }
-//   }
-// }
+    if (img) {
+      img.style.transition = 'left 1s ease-out'
+      img.style.left = '-35vw'
+    }
+  }
+}
 
 const startGame = () => {
-  // nextPageAnimation()
+  nextPageAnimation()
 
   setTimeout(() => {
     router.push(`/${quizName}/quizzing`)
     quizStore.isQuizInProgress = true
-  }, 100)
+  }, 1200)
 }
 </script>
 
@@ -163,8 +164,13 @@ const startGame = () => {
         </ul>
       </div>
 
-      <button @click="startGame" id="play-btn">Play!</button>
+      <div class="buttons-wrapper">
+        <p id="change-quiz">or change your quiz</p>
+        <QuizButtons />
+      </div>
     </div>
+
+    <button @click="startGame" id="play-btn">Play!</button>
   </div>
 </template>
 
@@ -180,17 +186,14 @@ const startGame = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-
-  background-color: #749cd4;
-
   overflow: hidden;
 }
 
 #background-image {
-  /* transform: scaleX(-1); */
+  transform: scaleX(-1);
 
   position: absolute;
-  left: 90vw;
+  left: 100vw;
   bottom: 0;
   border-left: 0.5px solid #f1e2d6;
   border-right: 0.5px solid #f1e2d6;
@@ -198,20 +201,23 @@ const startGame = () => {
   height: 100%;
 }
 
-.quiz-layout-wrapper {
-  position: absolute;
-
+.buttons-wrapper {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  gap: 0;
+  gap: 1vh;
+}
+
+.quiz-layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4vh;
+
+  align-items: center;
 
   width: max-content;
 
-  /* left: 100vw; */
   left: auto;
-
-  /* background-color: pink; */
 }
 
 .text-area {
@@ -286,13 +292,7 @@ input[type='radio'] {
   height: 20px;
   border-radius: 50%;
   border: 0.5px solid rgba(0, 0, 0, 0.5);
-
-  /* opacity: 0.3; */
 }
-
-/* input[type='radio']:hover {
-  opacity: 0.5;
-} */
 
 input[type='radio']:checked::after {
   content: '';
@@ -355,7 +355,8 @@ input::placeholder {
   font-size: clamp(1.2rem, 1.5vw + 0.5vh, 2.5rem);
 }
 
-.errors {
+.errors,
+#change-quiz {
   font-size: clamp(0.95rem, 1.2vw + 0.4vh, 2.4rem);
 }
 

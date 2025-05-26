@@ -54,37 +54,6 @@ onUnmounted(() => {
   window.removeEventListener('popstate', handleBackButton)
 })
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//space for my thoughts
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 //funct changing colors of the correct/incorrect option
 const option1Refs = ref([])
 const option2Refs = ref([])
@@ -119,12 +88,14 @@ onMounted(() => {
 
     <div v-if="endGame === 'you-lost'" class="lost">
       <h1>You Lost</h1>
-      <h2>YOUR SCORE: {{ quizStore.questionIndex }}</h2>
+      <h2>YOUR SCORE: {{ quizStore.questionIndex - quizStore.incorrectsArray.length - 1 }}</h2>
     </div>
 
     <div v-if="endGame === 'save-infinity-score'">
       <h1>INFINITY MODE</h1>
-      <p>Your current score is {{ quizStore.questionIndex - 1 }}</p>
+      <p>
+        Your current score is {{ quizStore.questionIndex - quizStore.incorrectsArray.length - 1 }}
+      </p>
       <p>Your best score is {{ quizStore.bestInfinityScore }}</p>
     </div>
 
@@ -140,12 +111,16 @@ onMounted(() => {
 
     <!-- <div class="infinite-mode"></div> -->
 
-    <div>
-      <div>
-        <p>Play the same quiz</p>
-        <p>Play teh same quiz with differet setting</p>
+    <div class="replay">
+      <div class="replay-wrapper">
+        <button id="replay-btn">Replay</button>
+        <p id="invisible-text">insisible text</p>
       </div>
-      <p>Play another quiz</p>
+      <div class="diff-settings-wrapper">
+        <button id="diff-settings-btn">Replay</button>
+        <p id="visible-text">with different settings</p>
+      </div>
+      <!-- replay -->
     </div>
   </div>
 </template>
@@ -154,14 +129,15 @@ onMounted(() => {
 .wrapper {
   height: 100vh;
   width: 100vw;
-  padding: 10vh 0;
+  padding-top: 15vh;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 
   background-color: #749cd4;
+  /* background-color: pink; */
 
   overflow: hidden;
 }
@@ -231,11 +207,109 @@ onMounted(() => {
 
   background-color: #f1e2d6;
 
-  cursor: pointer;
-
   border: 3px solid transparent;
 
   font-size: clamp(1.2rem, 1.5vw + 0.5vh, 2.5rem);
+}
+
+/* REPLAY */
+.replay {
+  background-color: #2f4d9d;
+
+  width: 100%;
+  height: 15vh;
+
+  border-top: 0.5px #f1e2d6 solid;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4vw;
+}
+
+.diff-settings-wrapper,
+.replay-wrapper {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#invisible-text {
+  color: #2f4d9d;
+  pointer-events: none;
+}
+
+#replay-btn,
+#diff-settings-btn {
+  padding: 1rem 2rem;
+
+  font-weight: 800;
+  color: white;
+
+  background-color: #fab662;
+
+  border: 1px solid #f1e2d6;
+  border-radius: clamp(25px, 5vw, 48px);
+
+  cursor: pointer;
+}
+
+#visible-text {
+  text-align: center;
+  font-style: italic;
+  font-weight: 200;
+}
+
+.quizzes-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1vw;
+}
+
+.quiz {
+  opacity: 1;
+
+  color: black;
+  background-color: #f1e2d6;
+
+  border-radius: 25px;
+
+  width: 12ch;
+  padding: 0.5rem 1rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  cursor: pointer;
+}
+
+.quiz:hover {
+  color: white;
+  background-color: #fab662;
+}
+
+.quiz.disabled {
+  pointer-events: none;
+  user-select: none;
+  cursor: not-allowed;
+}
+
+/* RESPONSIVE FONT MANAGEMENT */
+#replay-btn,
+#diff-settings-btn {
+  font-size: clamp(1rem, 0.85vw + 0.85vh, 2rem);
+}
+
+#invisible-text,
+#visible-text {
+  font-size: clamp(0.875rem, 0.7vw + 0.7vh, 1rem);
 }
 
 @media (max-width: 768px) {

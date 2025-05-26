@@ -13,9 +13,13 @@ const quizStore = useQuizStore()
 
 const router = useRouter()
 const route = useRoute()
-
 const quizName = route.params.quizName
 
+const shadowBox = ref(null)
+const answerBtns = ref(null)
+const backgroundImg = ref(null)
+
+//BROWSER NAVIGATION
 //Handling browser refresh, close, or navigate away
 function handleBeforeUnload(event) {
   if (quizStore.isQuizInProgress) {
@@ -75,20 +79,20 @@ onUnmounted(() => {
 })
 
 //OPEN PAGE ANIMATION
-// const openPageAnimation = () => {
-//   const el = shadowBox.value
+const openPageAnimation = () => {
+  const el1 = shadowBox.value
 
-//   if (el) {
-//     el.style.transition = 'left 0.5s ease-out'
-//     el.style.left = 'auto'
-//   }
-// }
+  if (el1) {
+    el1.style.transition = 'left 1s ease-out'
+    el1.style.left = 'auto'
+  }
+}
 
-// onMounted(() => {
-//   setTimeout(() => {
-//     openPageAnimation()
-//   }, 1)
-// })
+onMounted(() => {
+  setTimeout(() => {
+    openPageAnimation()
+  }, 1)
+})
 
 const props = defineProps({
   answer1: String,
@@ -102,29 +106,19 @@ const props = defineProps({
 
 const emit = defineEmits(['answer-selected'])
 
-const shadowBox = ref(null)
-
-// const incorrectsArray = ref([])
-
-const answerBtns = ref(null)
-
 watch(
   () => [props.isCorrect, quizStore.isQuizInProgress],
   ([isCorrect, isQuizInProgress]) => {
-    if (isCorrect === null) return // Only act when there's a valid answer
+    if (isCorrect === null) return
 
     if (isQuizInProgress === true) {
       console.log('Answer was:', isCorrect ? 'correct' : 'incorrect')
     }
 
-    // console.log(answers)
-
     answerBtns.value = document.querySelectorAll('.answer-btn')
 
     const answer1 = answerBtns.value[0]
     const answer2 = answerBtns.value[1]
-
-    // console.log(answer1, answer2)
 
     if (isQuizInProgress === true) {
       if (!shadowBox.value) return
@@ -159,17 +153,15 @@ watch(
           quizStore.questionIndex++
         }
       }, 500)
-    }
 
-    //UPDATES CORRECTLY
-    if (isCorrect === false) {
-      quizStore.incorrectsArray.push({
-        option1: props.option1,
-        option2: props.option2,
-        chosenOption: props.chosenOption,
-      })
+      if (isCorrect === false) {
+        quizStore.incorrectsArray.push({
+          option1: props.option1,
+          option2: props.option2,
+          chosenOption: props.chosenOption,
+        })
+      }
     }
-    // console.log(quizStore.incorrectsArray)
   },
 )
 
@@ -196,14 +188,14 @@ watch(
           if (errorsCount >= 1) {
             quizStore.isQuizInProgress = false
             setTimeout(() => {
-              router.push('/you-lost')
+              router.push(`/${quizName}/you-lost`)
             }, 500)
           }
         } else {
           if (errorsCount >= quizStore.maxErrors) {
             quizStore.isQuizInProgress = false
             setTimeout(() => {
-              router.push('/you-lost')
+              router.push(`/${quizName}/you-lost`)
             }, 500)
           }
         }
@@ -212,53 +204,33 @@ watch(
           if (errorsCount >= 1) {
             quizStore.isQuizInProgress = false
             setTimeout(() => {
-              router.push('/you-lost')
+              router.push(`/${quizName}/you-lost`)
             }, 500)
           } else if (quizStore.numberOfQuestions === questionIndex - 1) {
+            quizStore.isQuizInProgress = false
             setTimeout(() => {
-              quizStore.isQuizInProgress = false
-              router.push('/you-won')
+              router.push(`/${quizName}/you-won`)
             }, 500)
           }
         } else if (quizStore.maxErrors > 0) {
           if (errorsCount >= quizStore.maxErrors) {
+            quizStore.isQuizInProgress = false
             setTimeout(() => {
-              quizStore.isQuizInProgress = false
-              router.push('/you-lost')
+              router.push(`/${quizName}/you-lost`)
             }, 500)
           } else if (quizStore.numberOfQuestions === questionIndex - 1) {
+            quizStore.isQuizInProgress = false
             setTimeout(() => {
-              quizStore.isQuizInProgress = false
-              router.push('/you-won')
+              router.push(`/${quizName}/you-won`)
             }, 500)
           }
         }
       }
     }
 
-    // setTimeout(() => {
-    //   endGame()
-    //   // this value has to stay bigger than teh delay for generating a new pair as it stops the isQuizInProgress and when a new pair is generated
-    //   //  - idk why but when its below the last incorerct answer is added twice to an array
-    // }, 450)
-
     endGame()
   },
 )
-
-// onMounted(() => {
-//   function endGame() {
-//     if (quizStore.maxErrors - quizStore.errorsCount === 0) {
-//       console.log('you lost')
-//     } else if (
-//       quizStore.maxErrors - quizStore.errorsCount !== 0 &&
-//       quizStore.numberOfQuestions === props.questionIndex
-//     ) {
-//       console.log('you won')
-//     }
-//   }
-//   endGame()
-// })
 </script>
 
 <template>
@@ -281,17 +253,16 @@ watch(
           {{ quizStore.infiniteMode ? '&#8734;' : quizStore.numberOfQuestions }}
         </h2>
         <h1 class="question">Which country has the bigger population?</h1>
-        <!-- text-area -->
       </div>
 
       <ul class="answers">
         <button class="answer-btn" @click="emit('answer-selected', 'answer1')">
           {{ answer1 }}
+          <!-- long name for testing -->
           <!-- Saint Helena, Ascension and Tristan da Cunha Guinea-Bissau -->
         </button>
         <button class="answer-btn" @click="emit('answer-selected', 'answer2')">
           {{ answer2 }}
-          <!-- long name for testing -->
           <!-- Saint Helena, Ascension and Tristan da Cunha Guinea-Bissau -->
         </button>
       </ul>
@@ -327,19 +298,19 @@ watch(
 }
 
 #background-image {
-  /* transform: scaleX(-1); */
+  transform: scaleX(-1);
 
   position: absolute;
-  left: -45vw;
-  border-right: 0.5px solid #f1e2d6;
+  left: -35vw;
+  border-left: 0.5px solid #f1e2d6;
 
   height: 100%;
 }
 
 .shadow-box {
   position: absolute;
-  /* left: 100vw; */
-  left: auto;
+  left: 100vw;
+  /* left: auto; */
   bottom: 50vh;
 
   width: 44vw;

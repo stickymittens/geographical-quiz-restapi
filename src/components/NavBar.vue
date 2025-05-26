@@ -33,8 +33,7 @@ function homePageBtn() {
     <ul>
       <li id="home-page" @click="homePageBtn">Home Page</li>
       <li>How to play?</li>
-      <li>Scoreboards</li>
-      <li>Profile/Log in</li>
+      <li>Settings and Quizzes</li>
     </ul>
   </div>
 </template>

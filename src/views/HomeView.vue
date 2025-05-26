@@ -52,7 +52,6 @@ const openPageAnimation = () => {
               element.style.opacity = 1
             },
             (index + 1) * 200,
-            // (index + 1) * 1000,
           )
         }, 1600)
       })
@@ -109,8 +108,7 @@ const chooseQuiz = (quizName) => {
 
   setTimeout(() => {
     router.push(`/${quizName}/choose-quiz-mode`)
-  }, 2000)
-  // }, 1)
+  }, 2750)
 }
 </script>
 
@@ -123,7 +121,6 @@ const chooseQuiz = (quizName) => {
 "
       />
     </div>
-    <!-- <h1 id="title">Quizzes</h1> -->
     <div ref="quizzesWrapper" class="quizzes-wrapper">
       <h1 ref="question">
         Which quiz
@@ -142,6 +139,7 @@ const chooseQuiz = (quizName) => {
       <div @click="chooseQuiz('language')" :class="['quiz', { disabled: buttonsDisabled }]">
         Language
       </div>
+      <!-- quizzes wrapper -->
     </div>
   </div>
 </template>

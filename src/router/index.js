@@ -24,9 +24,10 @@ const router = createRouter({
       component: QuizView,
     },
     {
-      path: '/:endGame',
+      path: '/:quizName/:endGame',
       name: 'endGameView',
       component: EndGameView,
+      // propsQuizName: (route) => ({ quiz: route.params.quizName }),
       props: (route) => ({ endGame: route.params.endGame }),
     },
   ],
