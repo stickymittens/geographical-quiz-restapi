@@ -10,28 +10,33 @@ const route = useRoute()
 
 const quizLayoutWrapper = ref(null)
 const backgroundImg = ref(null)
+const playBtn = ref(null)
 
 const openPageAnimation = () => {
   const el = quizLayoutWrapper.value
   const img = backgroundImg.value
+  const btn = playBtn.value
+
+  if (img) {
+    img.style.transition = 'left 0.5s ease-out'
+    img.style.left = '80vw'
+  }
 
   if (el) {
-    el.style.transition = 'left 1.5s ease-out'
-    el.style.left = '25vw'
+    el.style.transition = 'opacity 1s ease-out'
+    el.style.opacity = '1'
+  }
 
-    if (img) {
-      img.style.transition = 'left 0.5s ease-out'
-      img.style.left = '80vw'
-    }
+  if (btn) {
+    btn.style.transition = 'opacity 1s ease-out'
+    btn.style.opacity = '1'
   }
 }
 
 onMounted(() => {
   setTimeout(() => {
     openPageAnimation()
-  }, 1)
-
-  // openPageAnimation()
+  }, 100)
 })
 
 onMounted(() => {
@@ -170,7 +175,7 @@ const startGame = () => {
       </div>
     </div>
 
-    <button @click="startGame" id="play-btn">Play!</button>
+    <button ref="playBtn" @click="startGame" id="play-btn">Play!</button>
   </div>
 </template>
 
@@ -199,6 +204,8 @@ const startGame = () => {
   border-right: 0.5px solid #f1e2d6;
 
   height: 100%;
+
+  z-index: 0;
 }
 
 .buttons-wrapper {
@@ -206,6 +213,8 @@ const startGame = () => {
   flex-direction: column;
   align-items: center;
   gap: 1vh;
+
+  z-index: 1;
 }
 
 .quiz-layout-wrapper {
@@ -216,13 +225,12 @@ const startGame = () => {
   align-items: center;
 
   width: max-content;
+  z-index: 1;
 
-  left: auto;
+  opacity: 1;
 }
 
 .text-area {
-  /* flex-grow: 1; */
-
   text-align: center;
 
   display: flex;
@@ -238,8 +246,6 @@ const startGame = () => {
 
   background-color: #f1e2d6;
   color: black;
-  /* border: 1px solid #633851;
-   */
   border-radius: 25px;
 }
 
@@ -331,6 +337,9 @@ input[type='radio']:not(:checked)::after {
   border-radius: clamp(25px, 5vw, 48px);
 
   cursor: pointer;
+
+  z-index: 1;
+  opacity: 0;
 }
 
 /* RESPONSIVE FONT MANAGEMENT */
@@ -357,7 +366,7 @@ input::placeholder {
 
 .errors,
 #change-quiz {
-  font-size: clamp(0.95rem, 1.2vw + 0.4vh, 2.4rem);
+  font-size: clamp(0.95rem, 1.2vw + 0.8vh, 2.4rem);
 }
 
 #play-btn {
@@ -366,14 +375,19 @@ input::placeholder {
 
 /* MOBILE DEVICES */
 @media (max-width: 768px) {
-  .quiz-layout-wrapper {
+  .page-wrapper {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
 
+    gap: 4vh;
+  }
+
+  .quiz-layout-wrapper {
     gap: 2vh;
   }
 
   .text-area {
+    /* width: 95vw; */
     gap: 3vh;
 
     padding-left: 7vw;
@@ -391,6 +405,22 @@ input::placeholder {
 
   #play-btn {
     margin-left: 0;
+    /* width: 95vw; */
+  }
+}
+
+@media (max-width: 430px) {
+  .text-area {
+    width: 95vw;
+    gap: 3vh;
+
+    padding-left: 7vw;
+    padding-right: 7vw;
+  }
+
+  #play-btn {
+    margin-left: 0;
+    width: 95vw;
   }
 }
 </style>

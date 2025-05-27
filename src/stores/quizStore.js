@@ -76,6 +76,21 @@ export const useQuizStore = defineStore('quiz', () => {
     countryB.value = null
   }
 
+  function resetToReplay() {
+    isQuizInProgress.value = true
+    firstQuestion.value = true
+    questionIndex.value = 1
+
+    // infiniteMode.value = false
+    // numberOfQuestions.value = 20
+    // maxErrors.value = 3
+    errorsCount.value = 0
+    incorrectsArray.value = []
+
+    countryA.value = null
+    countryB.value = null
+  }
+
   return {
     questionIndex,
     firstQuestion,
@@ -90,6 +105,7 @@ export const useQuizStore = defineStore('quiz', () => {
     incorrectsArray,
     setQuizSettings,
     resetQuizStore,
+    resetToReplay,
 
     isQuizInProgress,
 

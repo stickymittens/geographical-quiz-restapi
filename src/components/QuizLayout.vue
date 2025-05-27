@@ -170,17 +170,18 @@ const infinityScoreBtn = ref(null)
 
 function saveInfinityScore() {
   quizStore.isQuizInProgress = false
-  router.push('/save-infinity-score')
+  router.push(`/${quizName}/save-infinity-score`)
 }
 
+//END GAME FUNCT
 watch(
   () => [quizStore.errorsCount, quizStore.questionIndex],
   ([errorsCount, questionIndex]) => {
-    let current = quizStore.questionIndex - 1
+    // let current = quizStore.questionIndex - 1
 
-    if (current > quizStore.bestInfinityScore) {
-      quizStore.bestInfinityScore = current
-    }
+    // if (current > quizStore.bestInfinityScore) {
+    //   quizStore.bestInfinityScore = current
+    // }
 
     function endGame() {
       if (quizStore.infiniteMode === true) {

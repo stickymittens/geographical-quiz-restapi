@@ -1,9 +1,10 @@
 <script setup>
 import { useQuizStore } from '@/stores/quizStore'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const quizStore = useQuizStore()
 const router = useRouter()
+const route = useRoute()
 
 function homePageBtn() {
   if (quizStore.isQuizInProgress) {
@@ -27,22 +28,52 @@ function homePageBtn() {
     })
   }
 }
+
+function goToChooseQuizMode() {
+  if (route.path.endsWith('/choose-quiz-mode')) {
+    // window.location.reload()
+    quizStore.resetQuizStore()
+    router.replace('/choose-quiz-mode').then(() => {
+      window.history.pushState(history.state, '', window.location.href)
+    })
+  } else {
+    if (quizStore.isQuizInProgress) {
+      const confirmLeave = confirm('You will lose all your progress. Are you sure?')
+      if (!confirmLeave) {
+        window.history.pushState(history.state, '', window.location.href)
+        return
+      }
+      quizStore.resetQuizStore()
+    } else {
+      quizStore.resetQuizStore()
+      router.replace('/choose-quiz-mode').then(() => {
+        window.history.pushState(history.state, '', window.location.href)
+      })
+    }
+  }
+}
 </script>
+
 <template>
   <div class="navbar-wrapper">
     <ul>
       <li id="home-page" @click="homePageBtn">Home Page</li>
       <li>How to play?</li>
-      <li>Settings and Quizzes</li>
+      <li @click="goToChooseQuizMode">Quizzes and Settings</li>
     </ul>
   </div>
 </template>
 
 <style scoped>
 .navbar-wrapper {
-  width: 100vw;
-
   position: relative;
+
+  width: 100vw;
+  height: 8vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: end;
 
   background-color: #f1e2d6;
   color: #633851;

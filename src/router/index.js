@@ -13,6 +13,11 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/choose-quiz-mode',
+      name: 'ChooseQuizMode',
+      component: ChooseQuizMode,
+    },
+    {
       path: '/:quizName/choose-quiz-mode',
       name: 'chooseqQuizMode',
       component: ChooseQuizMode,

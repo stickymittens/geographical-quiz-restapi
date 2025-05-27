@@ -1,36 +1,56 @@
 <script setup>
 // import { ref } from 'vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuizStore } from '@/stores/quizStore'
 
 const route = useRoute()
 const router = useRouter()
-// const quizName = route.params.quizName
-
-const quizName = computed(() => route.params.quizName)
+const currentQuizName = computed(() => route.params.quizName)
 
 const quizStore = useQuizStore()
+const quizzesWrapper = ref(null)
 
 const chooseQuiz = (quizName) => {
-  quizStore.resetQuizStore()
+  quizStore.resetToReplay()
   router.replace(`/${quizName}/choose-quiz-mode`)
 }
 </script>
+
 <template>
   <div class="wrapper">
-    <div class="quizzes-wrapper">
-      <div v-if="quizName !== 'capitals'" @click="chooseQuiz('capitals')" class="quiz">
-        Capitals
+    <div ref="quizzesWrapper" class="quizzes-wrapper">
+      <div class="row1">
+        <div
+          @click="chooseQuiz('capitals')"
+          :class="{ active: currentQuizName === 'capitals' }"
+          class="quiz"
+        >
+          Capitals
+        </div>
+        <div
+          @click="chooseQuiz('continents')"
+          :class="{ active: currentQuizName === 'continents' }"
+          class="quiz"
+        >
+          Continents
+        </div>
       </div>
-      <div v-if="quizName !== 'continents'" @click="chooseQuiz('continents')" class="quiz">
-        Continents
-      </div>
-      <div v-if="quizName !== 'population'" @click="chooseQuiz('population')" class="quiz">
-        Population
-      </div>
-      <div v-if="quizName !== 'language'" @click="chooseQuiz('language')" class="quiz">
-        Language
+      <div class="row2">
+        <div
+          @click="chooseQuiz('population')"
+          :class="{ active: currentQuizName === 'population' }"
+          class="quiz"
+        >
+          Population
+        </div>
+        <div
+          @click="chooseQuiz('language')"
+          :class="{ active: currentQuizName === 'language' }"
+          class="quiz"
+        >
+          Language
+        </div>
       </div>
     </div>
   </div>
@@ -41,6 +61,12 @@ const chooseQuiz = (quizName) => {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1vw;
+}
+
+.row1,
+.row2 {
+  display: flex;
   gap: 1vw;
 }
 
@@ -60,15 +86,44 @@ const chooseQuiz = (quizName) => {
   text-align: center;
 
   cursor: pointer;
+  opacity: 1;
+
+  transition: opacity 0.2s ease-in-out;
 }
 
-.quiz:hover {
+.quiz:hover,
+.quiz.active {
   color: white;
   background-color: #fab662;
+
+  transition: color 0.1s ease-out;
+}
+
+.quiz.active {
+  opacity: 0.5;
 }
 
 /* RESPONSIVE FONT MANAGEMENT */
 .quiz {
-  font-size: clamp(1.2rem, 1.2vw + 1vh, 2rem);
+  font-size: clamp(0.95rem, 1.2vw + 0.8vh, 2.4rem);
+}
+
+@media (max-width: 430px) {
+  .quizzes-wrapper {
+    flex-direction: column;
+    gap: 2vh;
+    justify-content: stretch;
+    align-items: stretch;
+  }
+
+  .row1,
+  .row2 {
+    display: flex;
+    gap: 2vh;
+  }
+
+  .quiz {
+    width: 40vw;
+  }
 }
 </style>

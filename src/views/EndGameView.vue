@@ -9,6 +9,7 @@ const quizStore = useQuizStore()
 const route = useRoute()
 const router = useRouter()
 const endGame = route.params.endGame
+const quizName = route.params.quizName
 
 //Handling browser refresh, close, or navigate away
 function handleBeforeUnload(event) {
@@ -54,6 +55,14 @@ onUnmounted(() => {
   window.removeEventListener('popstate', handleBackButton)
 })
 
+//inifnity - current & best score
+let currentScore = quizStore.questionIndex - quizStore.incorrectsArray.length - 1
+let best = quizStore.bestInfinityScore
+
+if (currentScore > quizStore.bestInfinityScore) {
+  quizStore.bestInfinityScore = currentScore
+}
+
 //funct changing colors of the correct/incorrect option
 const option1Refs = ref([])
 const option2Refs = ref([])
@@ -77,26 +86,40 @@ function changeOptionColors() {
 onMounted(() => {
   changeOptionColors()
 })
+
+function replaySameSettings() {
+  quizStore.resetToReplay()
+  router.replace(`/${quizName}/quizzing`)
+}
+
+function replayDiffSettings() {
+  quizStore.resetQuizStore()
+  router.replace(`/${quizName}/choose-quiz-mode`)
+}
 </script>
 
 <template>
   <div class="wrapper">
     <div v-if="endGame === 'you-won'" class="won">
       <h1>You won</h1>
-      <h2>YOUR SCORE: {{ quizStore.questionIndex }}</h2>
+      <h2>YOUR SCORE: {{ currentScore }}</h2>
     </div>
 
     <div v-if="endGame === 'you-lost'" class="lost">
       <h1>You Lost</h1>
-      <h2>YOUR SCORE: {{ quizStore.questionIndex - quizStore.incorrectsArray.length - 1 }}</h2>
+      <h2>
+        YOUR SCORE:
+        {{ currentScore }}
+      </h2>
     </div>
 
-    <div v-if="endGame === 'save-infinity-score'">
-      <h1>INFINITY MODE</h1>
-      <p>
-        Your current score is {{ quizStore.questionIndex - quizStore.incorrectsArray.length - 1 }}
-      </p>
-      <p>Your best score is {{ quizStore.bestInfinityScore }}</p>
+    <div v-if="endGame === 'save-infinity-score'" class="infinity-mode-wrapper">
+      <div class="infinity-mode">
+        <h1>INFINITY MODE</h1>
+        <p>Your current score is {{ currentScore }}</p>
+        <p>Your best score is {{ quizStore.bestInfinityScore }}</p>
+      </div>
+      <p v-if="currentScore > best" id="new-best">🎉 You achieved a new highest score! 🎉</p>
     </div>
 
     <div v-if="quizStore.incorrectsArray.length > 0" class="options-wrap">
@@ -109,14 +132,12 @@ onMounted(() => {
     </div>
     <div v-else>No errors</div>
 
-    <!-- <div class="infinite-mode"></div> -->
-
     <div class="replay">
       <div class="replay-wrapper">
-        <button id="replay-btn">Replay</button>
+        <button @click="replaySameSettings()" id="replay-btn">Replay</button>
         <p id="invisible-text">insisible text</p>
       </div>
-      <div class="diff-settings-wrapper">
+      <div @click="replayDiffSettings()" class="diff-settings-wrapper">
         <button id="diff-settings-btn">Replay</button>
         <p id="visible-text">with different settings</p>
       </div>
@@ -126,7 +147,11 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* correct #55b34bce 
+incorrect #f44336ce */
+
 .wrapper {
+  position: relative;
   height: 100vh;
   width: 100vw;
   padding-top: 15vh;
@@ -142,15 +167,25 @@ onMounted(() => {
   overflow: hidden;
 }
 
+.infinity-mode-wrapper {
+  width: 100vw;
+}
+
 .won,
-.lost {
+.lost,
+.infinity-mode,
+#new-best {
   text-align: center;
-  margin: 5vh 3vw;
+  margin: 5vh 0;
   padding: 2vh 0;
 
   width: 100%;
   background-color: #f1e2d6;
   color: #633851;
+}
+
+#new-best {
+  font-weight: 600;
 }
 
 .options-wrap {
@@ -303,7 +338,8 @@ onMounted(() => {
 
 /* RESPONSIVE FONT MANAGEMENT */
 #replay-btn,
-#diff-settings-btn {
+#diff-settings-btn,
+#new-best {
   font-size: clamp(1rem, 0.85vw + 0.85vh, 2rem);
 }
 
