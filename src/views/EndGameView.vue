@@ -11,6 +11,12 @@ const router = useRouter()
 const endGame = route.params.endGame
 const quizName = route.params.quizName
 
+//funct changing colors
+const option1Refs = ref([])
+const option2Refs = ref([])
+const optionValue1Refs = ref([])
+const optionValue2Refs = ref([])
+
 //Handling browser refresh, close, or navigate away
 function handleBeforeUnload(event) {
   event.preventDefault()
@@ -64,21 +70,24 @@ if (currentScore > quizStore.bestInfinityScore) {
 }
 
 //funct changing colors of the correct/incorrect option
-const option1Refs = ref([])
-const option2Refs = ref([])
-
 function changeOptionColors() {
   quizStore.incorrectsArray.forEach((item, index) => {
     const chosenOption = item.chosenOption
     const option1 = option1Refs.value[index]
     const option2 = option2Refs.value[index]
+    const value1 = optionValue1Refs.value[index]
+    const value2 = optionValue2Refs.value[index]
 
     if (chosenOption === 1) {
       option1.style.color = 'red'
+      value1.style.color = 'red'
       option2.style.color = 'green'
+      value2.style.color = 'green'
     } else if (chosenOption === 2) {
       option1.style.color = 'green'
+      value1.style.color = 'green'
       option2.style.color = 'red'
+      value2.style.color = 'red'
     }
   })
 }
@@ -126,8 +135,22 @@ function replayDiffSettings() {
       <!-- <p id="arrow1">&#8592;</p> -->
       <!-- <p id="arrow2">&#8592;</p> -->
       <div v-for="(item, index) in quizStore.incorrectsArray" :key="index" class="options">
-        <p :ref="(el) => (option1Refs[index] = el)" class="option1">{{ item.option1 }}</p>
-        <p :ref="(el) => (option2Refs[index] = el)" class="option2">{{ item.option2 }}</p>
+        <div class="wrapper-option-1">
+          <p :ref="(el) => (option1Refs[index] = el)" class="option1">
+            {{ item.option1 }}
+          </p>
+          <p :ref="(el) => (optionValue1Refs[index] = el)" class="option-value-1">
+            {{ item.optionValue1 }}
+          </p>
+        </div>
+        <div class="wrapper-option-2">
+          <p :ref="(el) => (option2Refs[index] = el)" class="option2">
+            {{ item.option2 }}
+          </p>
+          <p :ref="(el) => (optionValue2Refs[index] = el)" class="option-value-2">
+            {{ item.optionValue2 }}
+          </p>
+        </div>
       </div>
     </div>
     <div v-else>No errors</div>
@@ -147,7 +170,7 @@ function replayDiffSettings() {
 </template>
 
 <style scoped>
-/* correct #55b34bce 
+/* correct #55b34bce
 incorrect #f44336ce */
 
 .wrapper {
@@ -226,6 +249,18 @@ incorrect #f44336ce */
   margin-right: 10vw;
 }
 
+.optionsValues {
+  z-index: 10;
+}
+
+.wrapper-option-1,
+.wrapper-option-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2vh;
+}
+
 .option1,
 .option2 {
   display: flex;
@@ -238,13 +273,33 @@ incorrect #f44336ce */
 
   border-radius: 25px;
   padding: 0.5rem 1rem;
-  margin: 2vh 2vw;
+  margin: 0 2vw;
 
   background-color: #f1e2d6;
 
   border: 3px solid transparent;
 
   font-size: clamp(1.2rem, 1.5vw + 0.5vh, 2.5rem);
+}
+
+.option-value-1,
+.option-value-2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  height: 3rem;
+  width: 25vw;
+
+  border-radius: 25px;
+  padding: 0.5rem 1rem;
+  margin: 0 2vw;
+
+  background-color: #f1e2d6;
+  color: black;
+
+  border: 3px solid transparent;
 }
 
 /* REPLAY */
@@ -348,7 +403,12 @@ incorrect #f44336ce */
   font-size: clamp(0.875rem, 0.7vw + 0.7vh, 1rem);
 }
 
-@media (max-width: 768px) {
+.option-value-1,
+.option-value-2 {
+  font-size: clamp(0.875rem, 1.2vw + 0.8vh, 2.4rem);
+}
+
+@media (max-width: 1024px) {
   .options-wrap {
     scroll-padding-left: 2vw;
     scroll-padding-right: 2vw;
@@ -362,8 +422,38 @@ incorrect #f44336ce */
 
   .option1,
   .option2 {
+    width: 35vw;
+    /* margin: 2vh 2vw; */
+  }
+
+  .option-value-1,
+  .option-value-2 {
+    width: 35vw;
+    /* margin: 2vh 2vw; */
+  }
+}
+
+@media (max-width: 430px) {
+  .options-wrap {
+    scroll-padding-left: 2vw;
+    scroll-padding-right: 2vw;
+    padding: 0 2vw;
+  }
+
+  .options {
+    width: 96vw;
+  }
+
+  .option1,
+  .option2 {
     width: 44vw;
-    margin: 2vh 2vw;
+    /* margin: 2vh 2vw; */
+  }
+
+  .option-value-1,
+  .option-value-2 {
+    width: 44vw;
+    /* margin: 2vh 2vw; */
   }
 }
 </style>

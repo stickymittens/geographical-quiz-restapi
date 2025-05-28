@@ -19,6 +19,18 @@ const shadowBox = ref(null)
 const answerBtns = ref(null)
 const backgroundImg = ref(null)
 
+const props = defineProps({
+  answer1: String,
+  answer2: String,
+  isCorrect: Boolean,
+  option1: String,
+  option2: String,
+  optionValue1: Object,
+  optionValue2: Object,
+  chosenOption: Number,
+  endGame: String,
+})
+
 //BROWSER NAVIGATION
 //Handling browser refresh, close, or navigate away
 function handleBeforeUnload(event) {
@@ -94,16 +106,6 @@ onMounted(() => {
   }, 1)
 })
 
-const props = defineProps({
-  answer1: String,
-  answer2: String,
-  isCorrect: Boolean,
-  option1: String,
-  option2: String,
-  chosenOption: Number,
-  endGame: String,
-})
-
 const emit = defineEmits(['answer-selected'])
 
 watch(
@@ -158,6 +160,8 @@ watch(
         quizStore.incorrectsArray.push({
           option1: props.option1,
           option2: props.option2,
+          optionValue1: props.optionValue1,
+          optionValue2: props.optionValue2,
           chosenOption: props.chosenOption,
         })
       }
@@ -177,11 +181,11 @@ function saveInfinityScore() {
 watch(
   () => [quizStore.errorsCount, quizStore.questionIndex],
   ([errorsCount, questionIndex]) => {
-    // let current = quizStore.questionIndex - 1
+    let current = quizStore.questionIndex - 1
 
-    // if (current > quizStore.bestInfinityScore) {
-    //   quizStore.bestInfinityScore = current
-    // }
+    if (current > quizStore.bestInfinityScore) {
+      quizStore.bestInfinityScore = current
+    }
 
     function endGame() {
       if (quizStore.infiniteMode === true) {
@@ -259,11 +263,13 @@ watch(
       <ul class="answers">
         <button class="answer-btn" @click="emit('answer-selected', 'answer1')">
           {{ answer1 }}
+          <!-- {{ optionValue1 }} -->
           <!-- long name for testing -->
           <!-- Saint Helena, Ascension and Tristan da Cunha Guinea-Bissau -->
         </button>
         <button class="answer-btn" @click="emit('answer-selected', 'answer2')">
           {{ answer2 }}
+          <!-- {{ optionValue2 }} -->
           <!-- Saint Helena, Ascension and Tristan da Cunha Guinea-Bissau -->
         </button>
       </ul>

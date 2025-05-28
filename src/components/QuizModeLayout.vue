@@ -12,6 +12,18 @@ const quizLayoutWrapper = ref(null)
 const backgroundImg = ref(null)
 const playBtn = ref(null)
 
+// //reset values by refreshing
+// function resetByRefreshing() {
+//   if (route.path.endsWith('/choose-quiz-mode')) {
+//     quizStore.resetQuizStore()
+//     router.replace('/choose-quiz-mode').then(() => {
+//       window.history.pushState(history.state, '', window.location.href)
+//     })
+//   }
+// }
+
+// resetByRefreshing()
+
 const openPageAnimation = () => {
   const el = quizLayoutWrapper.value
   const img = backgroundImg.value
@@ -392,6 +404,8 @@ input::placeholder {
 
     padding-left: 7vw;
     padding-right: 7vw;
+
+    width: 80vw;
   }
 
   /* errors ul  */
@@ -405,6 +419,7 @@ input::placeholder {
 
   #play-btn {
     margin-left: 0;
+    width: 80vw;
     /* width: 95vw; */
   }
 }

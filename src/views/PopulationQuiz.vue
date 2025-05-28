@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useQuizStore } from '@/stores/quizStore'
 import { useCountryStore } from '@/stores/countryStore'
 import QuizLayout from '@/components/QuizLayout.vue'
@@ -22,6 +22,8 @@ const isCorrect = ref(null)
 
 const option1 = ref(null)
 const option2 = ref(null)
+let optionValue1 = ref(null)
+let optionValue2 = ref(null)
 const chosenOption = ref(null)
 
 // Use the generateNewPair method from the store to generate the country pair
@@ -36,6 +38,12 @@ const generateNewQuestion = async () => {
 
     option1.value = result.a.name
     option2.value = result.b.name
+    optionValue1.value = computed(() => {
+      return new Intl.NumberFormat('fr-FR').format(answerValue1.value)
+    })
+    optionValue2.value = computed(() => {
+      return new Intl.NumberFormat('fr-FR').format(answerValue2.value)
+    })
   }
 }
 
@@ -81,6 +89,8 @@ onMounted(async () => {
       :chosenOption="chosenOption"
       :option1="option1"
       :option2="option2"
+      :optionValue1="optionValue1"
+      :optionValue2="optionValue2"
       :isCorrect="isCorrect"
       @answer-selected="handleAnswerSelected"
     />
