@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineProps } from 'vue'
 import { defineEmits } from 'vue'
 // import { defineExpose } from 'vue'
@@ -13,20 +13,22 @@ const quizStore = useQuizStore()
 
 const router = useRouter()
 const route = useRoute()
-const quizName = route.params.quizName
+const quizName = computed(() => route.params.quizName)
+console.log(quizName)
 
 const shadowBox = ref(null)
 const answerBtns = ref(null)
 const backgroundImg = ref(null)
 
 const props = defineProps({
-  answer1: String,
-  answer2: String,
+  question: String,
+  answer1: [String, Array],
+  answer2: [String, Array],
   isCorrect: Boolean,
   option1: String,
   option2: String,
-  optionValue1: Object,
-  optionValue2: Object,
+  optionValue1: null,
+  optionValue2: null,
   chosenOption: Number,
   endGame: String,
 })
@@ -50,7 +52,7 @@ onMounted(() => {
     localStorage.removeItem('decidedToLeave')
 
     // Redirect after resetting quiz
-    router.replace(`/${quizName}/choose-quiz-mode`)
+    router.replace(`/${quizName.value}/choose-quiz-mode`)
     return // optional: prevent further redirect logic this time
   }
 
@@ -68,7 +70,7 @@ function handleBackButton() {
     const confirmLeave = confirm('You will lose all your progress. Are you sure?')
     if (confirmLeave) {
       quizStore.resetQuizStore()
-      router.replace(`/${quizName}/choose-quiz-mode`)
+      router.replace(`/${quizName.value}/choose-quiz-mode`)
     } else {
       window.history.pushState(history.state, '', window.location.href)
     }
@@ -174,7 +176,7 @@ const infinityScoreBtn = ref(null)
 
 function saveInfinityScore() {
   quizStore.isQuizInProgress = false
-  router.push(`/${quizName}/save-infinity-score`)
+  router.push(`/${quizName.value}/save-infinity-score`)
 }
 
 //END GAME FUNCT
@@ -193,14 +195,14 @@ watch(
           if (errorsCount >= 1) {
             quizStore.isQuizInProgress = false
             setTimeout(() => {
-              router.push(`/${quizName}/you-lost`)
+              router.push(`/${quizName.value}/you-lost`)
             }, 500)
           }
         } else {
           if (errorsCount >= quizStore.maxErrors) {
             quizStore.isQuizInProgress = false
             setTimeout(() => {
-              router.push(`/${quizName}/you-lost`)
+              router.push(`/${quizName.value}/you-lost`)
             }, 500)
           }
         }
@@ -209,24 +211,24 @@ watch(
           if (errorsCount >= 1) {
             quizStore.isQuizInProgress = false
             setTimeout(() => {
-              router.push(`/${quizName}/you-lost`)
+              router.push(`/${quizName.value}/you-lost`)
             }, 500)
           } else if (quizStore.numberOfQuestions === questionIndex - 1) {
             quizStore.isQuizInProgress = false
             setTimeout(() => {
-              router.push(`/${quizName}/you-won`)
+              router.push(`/${quizName.value}/you-won`)
             }, 500)
           }
         } else if (quizStore.maxErrors > 0) {
           if (errorsCount >= quizStore.maxErrors) {
             quizStore.isQuizInProgress = false
             setTimeout(() => {
-              router.push(`/${quizName}/you-lost`)
+              router.push(`/${quizName.value}/you-lost`)
             }, 500)
           } else if (quizStore.numberOfQuestions === questionIndex - 1) {
             quizStore.isQuizInProgress = false
             setTimeout(() => {
-              router.push(`/${quizName}/you-won`)
+              router.push(`/${quizName.value}/you-won`)
             }, 500)
           }
         }
@@ -257,7 +259,7 @@ watch(
           Question {{ quizStore.questionIndex }} out of
           {{ quizStore.infiniteMode ? '&#8734;' : quizStore.numberOfQuestions }}
         </h2>
-        <h1 class="question">Which country has the bigger population?</h1>
+        <h1 class="question">{{ props.question }}</h1>
       </div>
 
       <ul class="answers">

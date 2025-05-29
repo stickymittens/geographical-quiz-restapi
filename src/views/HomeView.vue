@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
+import QuizButtons from '@/components/QuizButtons.vue'
 
 const router = useRouter()
 
@@ -127,7 +128,8 @@ const chooseQuiz = (quizName) => {
         <span class="line-break"> </span>
         are you taking today?
       </h1>
-      <div @click="chooseQuiz('capitals')" :class="['quiz', { disabled: buttonsDisabled }]">
+      <QuizButtons />
+      <!-- <div @click="chooseQuiz('capitals')" :class="['quiz', { disabled: buttonsDisabled }]">
         Capitals
       </div>
       <div @click="chooseQuiz('continents')" :class="['quiz', { disabled: buttonsDisabled }]">
@@ -138,7 +140,7 @@ const chooseQuiz = (quizName) => {
       </div>
       <div @click="chooseQuiz('language')" :class="['quiz', { disabled: buttonsDisabled }]">
         Language
-      </div>
+      </div> -->
       <!-- quizzes wrapper -->
     </div>
   </div>

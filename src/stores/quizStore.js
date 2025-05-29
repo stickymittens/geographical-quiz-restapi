@@ -6,6 +6,8 @@ import { useCountryStore } from './countryStore'
 export const useQuizStore = defineStore('quiz', () => {
   const countryStore = useCountryStore()
 
+  const chosenQuiz = ref(null)
+
   const questionIndex = ref(1)
   const firstQuestion = ref(true)
 
@@ -64,6 +66,8 @@ export const useQuizStore = defineStore('quiz', () => {
   }
 
   function resetQuizStore() {
+    chosenQuiz.value = null
+
     isQuizInProgress.value = false
     firstQuestion.value = true
     questionIndex.value = 1
@@ -94,6 +98,8 @@ export const useQuizStore = defineStore('quiz', () => {
   }
 
   return {
+    chosenQuiz,
+
     questionIndex,
     firstQuestion,
     bestInfinityScore,

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useQuizStore } from '@/stores/quizStore'
 import { useRouter, useRoute } from 'vue-router'
 import QuizButtons from './QuizButtons.vue'
@@ -11,6 +11,10 @@ const route = useRoute()
 const quizLayoutWrapper = ref(null)
 const backgroundImg = ref(null)
 const playBtn = ref(null)
+
+const hovered = ref('')
+
+const quizName = computed(() => route.params.quizName)
 
 // //reset values by refreshing
 // function resetByRefreshing() {
@@ -71,10 +75,6 @@ const goNumberOfQuestionsMode = () => {
   quizStore.infiniteMode = false
 }
 
-const hovered = ref('')
-
-const quizName = route.params.quizName
-
 const nextPageAnimation = () => {
   const el = quizLayoutWrapper.value
   const img = backgroundImg.value
@@ -94,7 +94,7 @@ const startGame = () => {
   nextPageAnimation()
 
   setTimeout(() => {
-    router.push(`/${quizName}/quizzing`)
+    router.push(`/${quizName.value}/quizzing`)
     quizStore.isQuizInProgress = true
   }, 1200)
 }

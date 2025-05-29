@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import ChooseQuizMode from '@/views/ChooseQuizMode.vue'
-import QuizView from '@/views/PopulationQuiz.vue'
+import DynamicQuizView from '@/views/DynamicQuizView.vue'
 import EndGameView from '@/views/EndGameView.vue'
 
 const router = createRouter({
@@ -25,8 +25,9 @@ const router = createRouter({
     },
     {
       path: '/:quizName/quizzing',
-      name: 'quizView',
-      component: QuizView,
+      name: 'dynamicQuizView',
+      component: DynamicQuizView,
+      props: (route) => ({ quiz: route.params.quizName }),
     },
     {
       path: '/:quizName/:endGame',

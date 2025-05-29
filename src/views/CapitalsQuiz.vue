@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useQuizStore } from '@/stores/quizStore'
 import { useCountryStore } from '@/stores/countryStore'
 import QuizLayout from '@/components/QuizLayout.vue'
@@ -13,17 +13,18 @@ const countryStore = useCountryStore()
 //DEFINING VALUES
 const answer1 = ref(null)
 const answer2 = ref(null)
-
 const answerValue1 = ref(null)
 const answerValue2 = ref(null)
 
+const displayedCountry = ref(null) // Which country is currently asked about
+
 //PROPs
-const question = 'Which country has the larger population?'
+const question = ref(null)
 const isCorrect = ref(null)
 const option1 = ref(null)
 const option2 = ref(null)
-let optionValue1 = ref(null)
-let optionValue2 = ref(null)
+// let optionValue1 = ref(null)
+// let optionValue2 = ref(null)
 const chosenOption = ref(null)
 
 // Use the generateNewPair method from the store to generate the country pair
@@ -31,42 +32,34 @@ const generateNewQuestion = async () => {
   const result = await quizStore.generateNewPair()
 
   if (result?.a && result?.b) {
-    answer1.value = result.a.name
-    answer2.value = result.b.name
-    answerValue1.value = result.a.population
-    answerValue2.value = result.b.population
-    // answerValue1.value = 0
-    // answerValue2.value = 0
-    // console.log(typeof answerValue1.value)
-    // console.log(answerValue1.value === answerValue2.value)
+    answer1.value = result.a.capital
+    answer2.value = result.b.capital
 
-    option1.value = result.a.name
-    option2.value = result.b.name
-    optionValue1.value = computed(() => {
-      return new Intl.NumberFormat('fr-FR').format(answerValue1)
-    })
-    optionValue2.value = computed(() => {
-      return new Intl.NumberFormat('fr-FR').format(answerValue2)
-    })
+    answerValue1.value = result.a.name
+    answerValue2.value = result.b.name
+
+    const chosenValueNumber = Math.floor(Math.random() * 2) + 1
+    displayedCountry.value = chosenValueNumber === 1 ? answerValue1.value : answerValue2.value
+
+    question.value = `What's the capital of ${displayedCountry.value}`
   }
 }
 
 const handleAnswerSelected = (selectedAnswer) => {
-  if (selectedAnswer === 'answer1') {
-    if (answerValue1.value === answerValue2.value) {
-      isCorrect.value = true
-    } else {
-      isCorrect.value = answerValue1.value > answerValue2.value ? true : false
-    }
-  } else if (selectedAnswer === 'answer2') {
-    if (answerValue1.value === answerValue2.value) {
-      isCorrect.value = true
-    } else {
-      isCorrect.value = answerValue2.value > answerValue1.value ? true : false
-    }
+  let correctCapital = null
+  if (displayedCountry.value === answerValue1.value) {
+    correctCapital = answer1.value
+  } else if (displayedCountry.value === answerValue2.value) {
+    correctCapital = answer2.value
   }
 
-  chosenOption.value = selectedAnswer === 'answer1' ? 1 : 2
+  // Get the capital user selected
+  const selectedCapital = selectedAnswer === 'answer1' ? answer1.value : answer2.value
+
+  // Check correctness
+  isCorrect.value = selectedCapital === correctCapital
+
+  // chosenOption.value = selectedAnswer === 'answer1' ? 1 : 2
 
   if (quizStore.firstQuestion) {
     if (quizStore.isQuizInProgress) {
@@ -100,8 +93,8 @@ onMounted(async () => {
       :chosenOption="chosenOption"
       :option1="option1"
       :option2="option2"
-      :optionValue1="optionValue1"
-      :optionValue2="optionValue2"
+      :optionValue1="answerValue1"
+      :optionValue2="answerValue2"
       :isCorrect="isCorrect"
       @answer-selected="handleAnswerSelected"
     />
