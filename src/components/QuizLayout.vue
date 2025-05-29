@@ -325,7 +325,7 @@ watch(
 
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2vh;
 
   /* background-color: aquamarine; */
 
@@ -479,13 +479,19 @@ h1 {
   font-size: clamp(0.95rem, 1.2vw + 0.4vh, 2.4rem);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .shadow-box {
     width: 90vw;
   }
 
   .answer-btn {
     width: 44vw;
+  }
+}
+
+@media (max-width: 767px) {
+  .shadow-box {
+    gap: 2vh;
   }
 }
 </style>

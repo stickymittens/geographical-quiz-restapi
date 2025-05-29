@@ -426,7 +426,7 @@ input::placeholder {
 
 @media (max-width: 430px) {
   .text-area {
-    width: 95vw;
+    width: 96vw;
     gap: 3vh;
 
     padding-left: 7vw;
@@ -435,7 +435,7 @@ input::placeholder {
 
   #play-btn {
     margin-left: 0;
-    width: 95vw;
+    width: 90vw;
   }
 }
 </style>

@@ -6,7 +6,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const quizStore = useQuizStore()
 const router = useRouter()
 const route = useRoute()
-const isNavBarVisible = ref(false)
+// const isNavBarVisible = ref(false)
 const navBarSmallDevices = ref(null)
 const hamburgerMenu = ref(null)
 
@@ -50,7 +50,9 @@ function homePageBtn() {
 
 function goToChooseQuizMode() {
   if (route.path.endsWith('/choose-quiz-mode')) {
-    // window.location.reload()
+    if (width.value <= 430) {
+      toggleNavBarSmallDevices()
+    }
     quizStore.resetQuizStore()
     router.replace('/choose-quiz-mode').then(() => {
       window.history.pushState(history.state, '', window.location.href)
@@ -61,9 +63,19 @@ function goToChooseQuizMode() {
       if (!confirmLeave) {
         window.history.pushState(history.state, '', window.location.href)
         return
+      } else {
+        if (width.value <= 430) {
+          toggleNavBarSmallDevices()
+        }
+        quizStore.resetQuizStore()
+        router.replace('/choose-quiz-mode').then(() => {
+          window.history.pushState(history.state, '', window.location.href)
+        })
       }
-      quizStore.resetQuizStore()
     } else {
+      if (width.value <= 430) {
+        toggleNavBarSmallDevices()
+      }
       quizStore.resetQuizStore()
       router.replace('/choose-quiz-mode').then(() => {
         window.history.pushState(history.state, '', window.location.href)
@@ -73,11 +85,9 @@ function goToChooseQuizMode() {
 }
 
 function toggleNavBarSmallDevices() {
-  isNavBarVisible.value = !isNavBarVisible.value
+  quizStore.isSmallDevicesNavBarVisible = !quizStore.isSmallDevicesNavBarVisible
 
-  hamburgerMenu.value?.chil
-
-  if (isNavBarVisible.value === true) {
+  if (quizStore.isSmallDevicesNavBarVisible === true) {
     navBarSmallDevices.value.style.height = '100vh'
     Array.from(hamburgerMenu.value.children).forEach((child) => {
       child.style.backgroundColor = '#2d4c9d'
@@ -111,11 +121,14 @@ function toggleNavBarSmallDevices() {
       <div class="hamburger-menu-item"></div>
       <div class="hamburger-menu-item"></div>
     </div>
-    <div ref="navBarSmallDevices" :class="['navbar-small-devices', { visible: isNavBarVisible }]">
+    <div
+      ref="navBarSmallDevices"
+      :class="['navbar-small-devices', { visible: quizStore.isSmallDevicesNavBarVisible }]"
+    >
       <ul class="ul-small-devices">
         <li @click="homePageBtn" class="li-small-devices">Home Page</li>
         <li class="li-small-devices">How to play?</li>
-        <li class="li-small-devices">Quizzes and Settings</li>
+        <li @click="goToChooseQuizMode" class="li-small-devices">Quizzes and Settings</li>
       </ul>
     </div>
   </div>

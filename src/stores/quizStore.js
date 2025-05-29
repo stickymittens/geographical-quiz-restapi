@@ -23,6 +23,8 @@ export const useQuizStore = defineStore('quiz', () => {
   const countryA = ref(null)
   const countryB = ref(null)
 
+  const isSmallDevicesNavBarVisible = ref(null)
+
   function setQuizSettings(infiniteMode, numberOfQuestions, maxErrors) {
     infiniteMode.value = infiniteMode
     numberOfQuestions.value = numberOfQuestions
@@ -112,5 +114,7 @@ export const useQuizStore = defineStore('quiz', () => {
     countryA,
     countryB,
     generateNewPair,
+
+    isSmallDevicesNavBarVisible,
   }
 })
