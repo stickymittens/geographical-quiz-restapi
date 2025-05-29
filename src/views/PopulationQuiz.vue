@@ -33,38 +33,48 @@ const generateNewQuestion = async () => {
   if (result?.a && result?.b) {
     answer1.value = result.a.name
     answer2.value = result.b.name
-    answerValue1.value = result.a.population
-    answerValue2.value = result.b.population
+    // answerValue1.value = result.a.population
+    // answerValue2.value = result.b.population
+    answerValue1.value = 0
+    answerValue2.value = 0
+    // console.log(typeof answerValue1.value)
+    // console.log(answerValue1.value === answerValue2.value)
 
     option1.value = result.a.name
     option2.value = result.b.name
     optionValue1.value = computed(() => {
-      return new Intl.NumberFormat('fr-FR').format(answerValue1.value)
+      return new Intl.NumberFormat('fr-FR').format(answerValue1)
     })
     optionValue2.value = computed(() => {
-      return new Intl.NumberFormat('fr-FR').format(answerValue2.value)
+      return new Intl.NumberFormat('fr-FR').format(answerValue2)
     })
   }
 }
 
 const handleAnswerSelected = (selectedAnswer) => {
   if (selectedAnswer === 'answer1') {
-    isCorrect.value = answerValue1.value > answerValue2.value ? true : false
+    if (answerValue1.value === answerValue2.value) {
+      isCorrect.value = true
+    } else {
+      isCorrect.value = answerValue1.value > answerValue2.value ? true : false
+    }
   } else if (selectedAnswer === 'answer2') {
-    isCorrect.value = answerValue2.value > answerValue1.value ? true : false
+    if (answerValue1.value === answerValue2.value) {
+      isCorrect.value = true
+    } else {
+      isCorrect.value = answerValue2.value > answerValue1.value ? true : false
+    }
   }
 
   chosenOption.value = selectedAnswer === 'answer1' ? 1 : 2
 
-  if (quizStore.firstQuestion === true) {
+  if (quizStore.firstQuestion) {
     if (quizStore.isQuizInProgress) {
       generateNewQuestion()
     }
     quizStore.firstQuestion = false
   } else {
-    // console.log('Answer selected:', selectedAnswer)
-
-    // quizStore.firstQuestion = true
+    console.log('Answer selected:', selectedAnswer)
 
     setTimeout(() => {
       isCorrect.value = null

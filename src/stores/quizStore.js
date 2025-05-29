@@ -52,12 +52,12 @@ export const useQuizStore = defineStore('quiz', () => {
       const selectedA = countries[i]
       const selectedB = countries[j]
 
-      if (firstQuestion.value === true) {
-        // console.log(selectedA, selectedB)
-        console.log(selectedA.population > selectedB.population)
-      } else {
-        console.log(selectedA.population > selectedB.population)
-      }
+      // if (firstQuestion.value === true) {
+      //   // console.log(selectedA, selectedB)
+      //   console.log(selectedA.population > selectedB.population)
+      // } else {
+      //   console.log(selectedA.population > selectedB.population)
+      // }
 
       return { a: selectedA, b: selectedB }
     }
