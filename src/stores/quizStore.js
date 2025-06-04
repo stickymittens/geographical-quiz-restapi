@@ -22,8 +22,8 @@ export const useQuizStore = defineStore('quiz', () => {
 
   const isQuizInProgress = ref(false)
 
-  const countryA = ref(null)
-  const countryB = ref(null)
+  const selectedA = ref(null)
+  const selectedB = ref(null)
 
   const isSmallDevicesNavBarVisible = ref(null)
 
@@ -54,12 +54,7 @@ export const useQuizStore = defineStore('quiz', () => {
       const selectedA = countries[i]
       const selectedB = countries[j]
 
-      // if (firstQuestion.value === true) {
-      //   // console.log(selectedA, selectedB)
-      //   console.log(selectedA.population > selectedB.population)
-      // } else {
-      //   console.log(selectedA.population > selectedB.population)
-      // }
+      // console.log(selectedA, selectedB)
 
       return { a: selectedA, b: selectedB }
     }
@@ -78,8 +73,8 @@ export const useQuizStore = defineStore('quiz', () => {
     errorsCount.value = 0
     incorrectsArray.value = []
 
-    countryA.value = null
-    countryB.value = null
+    selectedA.value = null
+    selectedB.value = null
   }
 
   function resetToReplay() {
@@ -93,8 +88,8 @@ export const useQuizStore = defineStore('quiz', () => {
     errorsCount.value = 0
     incorrectsArray.value = []
 
-    countryA.value = null
-    countryB.value = null
+    selectedA.value = null
+    selectedB.value = null
   }
 
   return {
@@ -117,8 +112,8 @@ export const useQuizStore = defineStore('quiz', () => {
 
     isQuizInProgress,
 
-    countryA,
-    countryB,
+    selectedA,
+    selectedB,
     generateNewPair,
 
     isSmallDevicesNavBarVisible,

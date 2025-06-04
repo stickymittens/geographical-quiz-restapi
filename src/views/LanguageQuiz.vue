@@ -12,6 +12,8 @@ const countryStore = useCountryStore()
 
 //VALUES
 const displayedOptionValue = ref(null) // Which country is currently asked about
+const aLanguages = ref(null)
+const bLanguages = ref(null)
 
 //PROPs
 const question = ref(null)
@@ -27,36 +29,51 @@ const optionValue2 = ref(null)
 const chosenOption = ref(null)
 const isCorrect = ref(null)
 
+function formatLanguages(l) {
+  if (!l || l.length === 0) return ''
+
+  if (l.length === 1) {
+    return `${l[0]}`
+  }
+
+  if (l.length === 2) {
+    return `${l[0]} and ${l[1]}`
+  }
+
+  return `${l.slice(0, -1).join(', ')}, and ${l[l.length - 1]}`
+}
+
 // Use the generateNewPair method from the store to generate the country pair
 const generateNewQuestion = async () => {
   let result = await quizStore.generateNewPair()
 
   if (!result || !result.a || !result.b) return
 
-  // Retry if either capital is missing or empty
-  while (
-    !Array.isArray(result.a.capital) ||
-    result.a.capital.length === 0 ||
-    !Array.isArray(result.b.capital) ||
-    result.b.capital.length === 0
-  ) {
+  const aLangsArray = Object.values(result.a.languages).sort()
+  aLanguages.value = formatLanguages(aLangsArray)
+
+  const bLangsArray = Object.values(result.b.languages).sort()
+  bLanguages.value = formatLanguages(bLangsArray)
+
+  //retry if identical language(s)
+  if (aLanguages.value === bLanguages.value) {
     result = await quizStore.generateNewPair()
-    if (!result || !result.a || !result.b) return
+    console.log('ERROR - same language')
   }
 
-  option1.value = result.a.capital
-  option2.value = result.b.capital
+  option1.value = result.a.name
+  option2.value = result.b.name
 
-  formatOption1.value = option1.value[0]
-  formatOption2.value = option2.value[0]
-
-  optionValue1.value = result.a.name
-  optionValue2.value = result.b.name
+  optionValue1.value = aLanguages.value
+  optionValue2.value = bLanguages.value
 
   const chosenValueNumber = Math.floor(Math.random() * 2) + 1
   displayedOptionValue.value = chosenValueNumber === 1 ? optionValue1.value : optionValue2.value
 
-  question.value = `What's the capital of ${displayedOptionValue.value}?`
+  question.value = `What's the country with official language(s) of ${displayedOptionValue.value}?`
+  // question.value =
+  //   "What's the country with official language(s) of 'Afrikaans', 'English', 'Southern Ndebele', 'Northern Sotho' and 'Southern Sotho'?"
+  // question.value = "What's the country with official language(s) of Afrikaans?"
 }
 
 const handleAnswerSelected = (selectedAnswer) => {
@@ -66,19 +83,19 @@ const handleAnswerSelected = (selectedAnswer) => {
     }
     quizStore.firstQuestion = false
   } else {
-    let correctCapital = null
+    let correctCountry = null
     if (displayedOptionValue.value === optionValue1.value) {
-      correctCapital = formatOption1.value
+      correctCountry = option1.value
     } else if (displayedOptionValue.value === optionValue2.value) {
-      correctCapital = formatOption2.value
+      correctCountry = option2.value
     }
 
-    const selectedCapital = selectedAnswer === 'answer1' ? formatOption1.value : formatOption2.value
+    const selectedCapital = selectedAnswer === 'answer1' ? option1.value : option2.value
     console.log('Answer selected:', selectedAnswer)
 
     // Check correctness
     chosenOption.value = selectedAnswer === 'answer1' ? 1 : 2
-    isCorrect.value = selectedCapital === correctCapital
+    isCorrect.value = selectedCapital === correctCountry
 
     setTimeout(() => {
       isCorrect.value = null
@@ -99,8 +116,8 @@ onMounted(async () => {
   <div class="quiz-wrapper">
     <QuizLayout
       :question="question"
-      :option1="formatOption1"
-      :option2="formatOption2"
+      :option1="option1"
+      :option2="option2"
       :optionValue1="optionValue1"
       :optionValue2="optionValue2"
       :chosenOption="chosenOption"

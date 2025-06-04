@@ -19,7 +19,8 @@ export const useCountryStore = defineStore('country', {
           continents: country.continents,
         }))
 
-        // console.log(this.countries)
+        // const languages = this.countries.map((country) => country.languages)
+        // console.log(Object.values(languages))
 
         // Calculate and log the longest name
         // const longest = this.countries.reduce(

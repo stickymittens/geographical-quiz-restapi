@@ -14,22 +14,19 @@ const quizStore = useQuizStore()
 const router = useRouter()
 const route = useRoute()
 const quizName = computed(() => route.params.quizName)
-console.log(quizName)
 
 const shadowBox = ref(null)
-const answerBtns = ref(null)
+const optionBtns = ref(null)
 const backgroundImg = ref(null)
 
 const props = defineProps({
   question: String,
-  answer1: [String, Array],
-  answer2: [String, Array],
-  isCorrect: Boolean,
-  option1: String,
-  option2: String,
-  optionValue1: null,
-  optionValue2: null,
+  option1: [String, Array],
+  option2: [String, Array],
+  optionValue1: [String, Array],
+  optionValue2: [String, Array],
   chosenOption: Number,
+  isCorrect: Boolean,
   endGame: String,
 })
 
@@ -102,10 +99,16 @@ const openPageAnimation = () => {
   }
 }
 
-onMounted(() => {
-  setTimeout(() => {
+// onMounted(() => {
+//   setTimeout(() => {
+//     openPageAnimation()
+//   }, 1)
+// })
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
     openPageAnimation()
-  }, 1)
+  })
 })
 
 const emit = defineEmits(['answer-selected'])
@@ -119,34 +122,34 @@ watch(
       console.log('Answer was:', isCorrect ? 'correct' : 'incorrect')
     }
 
-    answerBtns.value = document.querySelectorAll('.answer-btn')
+    optionBtns.value = document.querySelectorAll('.option-btn')
 
-    const answer1 = answerBtns.value[0]
-    const answer2 = answerBtns.value[1]
+    const option1 = optionBtns.value[0]
+    const option2 = optionBtns.value[1]
 
     if (isQuizInProgress === true) {
       if (!shadowBox.value) return
 
       if (props.chosenOption === 1) {
         if (isCorrect === true) {
-          answer1.classList.add('answer-correct')
+          option1.classList.add('answer-correct')
         } else if (isCorrect === false) {
-          answer1.classList.add('answer-incorrect')
+          option1.classList.add('answer-incorrect')
         }
       } else if (props.chosenOption === 2) {
         if (isCorrect === true) {
-          answer2.classList.add('answer-correct')
+          option2.classList.add('answer-correct')
         } else if (isCorrect === false) {
-          answer2.classList.add('answer-incorrect')
+          option2.classList.add('answer-incorrect')
         }
       }
 
       setTimeout(() => {
         if (shadowBox.value) {
-          answer1.classList.remove('answer-correct')
-          answer1.classList.remove('answer-incorrect')
-          answer2.classList.remove('answer-correct')
-          answer2.classList.remove('answer-incorrect')
+          option1.classList.remove('answer-correct')
+          option1.classList.remove('answer-incorrect')
+          option2.classList.remove('answer-correct')
+          option2.classList.remove('answer-incorrect')
         }
       }, 500)
 
@@ -262,16 +265,16 @@ watch(
         <h1 class="question">{{ props.question }}</h1>
       </div>
 
-      <ul class="answers">
-        <button class="answer-btn" @click="emit('answer-selected', 'answer1')">
-          {{ answer1 }}
-          <!-- {{ optionValue1 }} -->
+      <ul class="options">
+        <button class="option-btn" @click="emit('answer-selected', 'answer1')">
+          {{ props.option1 }}
+          <!-- {{ props.optionValue1 }} -->
           <!-- long name for testing -->
           <!-- Saint Helena, Ascension and Tristan da Cunha Guinea-Bissau -->
         </button>
-        <button class="answer-btn" @click="emit('answer-selected', 'answer2')">
-          {{ answer2 }}
-          <!-- {{ optionValue2 }} -->
+        <button class="option-btn" @click="emit('answer-selected', 'answer2')">
+          {{ props.option2 }}
+          <!-- {{ props.optionValue2 }} -->
           <!-- Saint Helena, Ascension and Tristan da Cunha Guinea-Bissau -->
         </button>
       </ul>
@@ -320,10 +323,9 @@ watch(
   position: absolute;
   left: 100vw;
   /* left: auto; */
-  bottom: 50vh;
 
   width: 44vw;
-  height: 30vh;
+  height: 60vh;
 
   display: flex;
   flex-direction: column;
@@ -363,6 +365,17 @@ watch(
   font-style: italic;
 }
 
+.question {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 25vh;
+  /* padding: 5vh 3vw; */
+  /* margin-top: 2vh; */
+  /* background-color: pink; */
+}
+
 .errors {
   align-self: flex-end;
   color: #eb5d3d;
@@ -380,7 +393,7 @@ ul {
   width: 100%;
 }
 
-.answers {
+.options {
   /* background-color: yellow; */
   padding: 20px;
 
@@ -390,7 +403,7 @@ ul {
   gap: 2vw;
 }
 
-.answer-btn {
+.option-btn {
   flex-shrink: 0;
 
   height: 8rem;
@@ -406,15 +419,15 @@ ul {
   border: 3px solid transparent;
 }
 
-.answer-btn:hover:not(.correct):not(.incorrect) {
+.option-btn:hover:not(.correct):not(.incorrect) {
   border-color: #fab662;
 }
 
-.answer-btn.answer-correct {
+.option-btn.answer-correct {
   border-color: #55b34bce !important;
 }
 
-.answer-btn.answer-incorrect {
+.option-btn.answer-incorrect {
   border-color: #f44336ce !important;
 }
 
@@ -467,10 +480,10 @@ ul {
 
 /* RESPONSIVE FONT MANAGEMENT  */
 h1 {
-  font-size: clamp(1.3rem, 1.5vw + 1.5vh, 3.2rem);
+  font-size: clamp(1.1rem, 1.5vw + 1.5vh, 3.2rem);
 }
 
-.answer-btn {
+.option-btn {
   font-size: clamp(1.2rem, 1.5vw + 0.5vh, 2.5rem);
 }
 
@@ -486,14 +499,25 @@ h1 {
     width: 90vw;
   }
 
-  .answer-btn {
+  .option-btn {
     width: 44vw;
+  }
+
+  .question {
+    height: 10vh;
+    /* padding: 3vh 3vw; */
   }
 }
 
 @media (max-width: 767px) {
   .shadow-box {
     gap: 2vh;
+  }
+
+  .question {
+    height: 20vh;
+
+    /* background-color: pink; */
   }
 }
 </style>

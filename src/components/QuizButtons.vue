@@ -24,16 +24,16 @@ const chooseQuiz = (quizName) => {
         <div
           @click="chooseQuiz('capitals')"
           :class="{ active: currentQuizName === 'capitals' }"
-          class="quiz"
+          class="quiz double"
         >
           Capitals
         </div>
         <div
-          @click="chooseQuiz('continents')"
-          :class="{ active: currentQuizName === 'continents' }"
-          class="quiz"
+          @click="chooseQuiz('countries')"
+          :class="{ active: currentQuizName === 'countries' }"
+          class="quiz double"
         >
-          Continents
+          Countries
         </div>
       </div>
       <div class="row2">
@@ -107,6 +107,10 @@ const chooseQuiz = (quizName) => {
 .quiz {
   font-size: clamp(0.95rem, 1.2vw + 0.8vh, 2.4rem);
 }
+
+/* .double {
+  font-size: clamp(0.087rem, 1vw + 0.6vh, 2.4rem);
+} */
 
 @media (max-width: 430px) {
   .quizzes-wrapper {

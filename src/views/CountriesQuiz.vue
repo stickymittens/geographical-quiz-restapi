@@ -11,18 +11,18 @@ const quizStore = useQuizStore()
 const countryStore = useCountryStore()
 
 //VALUES
-const displayedOptionValue = ref(null) // Which country is currently asked about
+const displayedOption = ref(null) // Which country is currently asked about
 
 //PROPs
 const question = ref(null)
 
 const option1 = ref(null)
 const option2 = ref(null)
-const formatOption1 = ref(null)
-const formatOption2 = ref(null)
 
 const optionValue1 = ref(null)
 const optionValue2 = ref(null)
+const formatOptionValue1 = ref(null)
+const formatOptionValue2 = ref(null)
 
 const chosenOption = ref(null)
 const isCorrect = ref(null)
@@ -44,19 +44,19 @@ const generateNewQuestion = async () => {
     if (!result || !result.a || !result.b) return
   }
 
-  option1.value = result.a.capital
-  option2.value = result.b.capital
+  option1.value = result.a.name
+  option2.value = result.b.name
 
-  formatOption1.value = option1.value[0]
-  formatOption2.value = option2.value[0]
+  optionValue1.value = result.a.capital
+  optionValue2.value = result.b.capital
 
-  optionValue1.value = result.a.name
-  optionValue2.value = result.b.name
+  formatOptionValue1.value = optionValue1.value[0]
+  formatOptionValue2.value = optionValue2.value[0]
 
-  const chosenValueNumber = Math.floor(Math.random() * 2) + 1
-  displayedOptionValue.value = chosenValueNumber === 1 ? optionValue1.value : optionValue2.value
+  const chosenOptionNumber = Math.floor(Math.random() * 2) + 1
+  displayedOption.value = chosenOptionNumber === 1 ? optionValue1.value : optionValue2.value
 
-  question.value = `What's the capital of ${displayedOptionValue.value}?`
+  question.value = `Which country has the capital city of ${displayedOption.value}?`
 }
 
 const handleAnswerSelected = (selectedAnswer) => {
@@ -66,19 +66,19 @@ const handleAnswerSelected = (selectedAnswer) => {
     }
     quizStore.firstQuestion = false
   } else {
-    let correctCapital = null
-    if (displayedOptionValue.value === optionValue1.value) {
-      correctCapital = formatOption1.value
-    } else if (displayedOptionValue.value === optionValue2.value) {
-      correctCapital = formatOption2.value
+    let correctCountry = null
+    if (displayedOption.value === optionValue1.value) {
+      correctCountry = option1.value
+    } else if (displayedOption.value === optionValue2.value) {
+      correctCountry = option2.value
     }
 
-    const selectedCapital = selectedAnswer === 'answer1' ? formatOption1.value : formatOption2.value
+    const selectedCapital = selectedAnswer === 'answer1' ? option1.value : option2.value
     console.log('Answer selected:', selectedAnswer)
 
     // Check correctness
     chosenOption.value = selectedAnswer === 'answer1' ? 1 : 2
-    isCorrect.value = selectedCapital === correctCapital
+    isCorrect.value = selectedCapital === correctCountry
 
     setTimeout(() => {
       isCorrect.value = null
@@ -99,10 +99,10 @@ onMounted(async () => {
   <div class="quiz-wrapper">
     <QuizLayout
       :question="question"
-      :option1="formatOption1"
-      :option2="formatOption2"
-      :optionValue1="optionValue1"
-      :optionValue2="optionValue2"
+      :option1="option1"
+      :option2="option2"
+      :optionValue1="formatOptionValue1"
+      :optionValue2="formatOptionValue2"
       :chosenOption="chosenOption"
       :isCorrect="isCorrect"
       @answer-selected="handleAnswerSelected"
