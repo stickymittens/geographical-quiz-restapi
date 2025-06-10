@@ -13,6 +13,12 @@
   width: 100vw;
 }
 
+input:focus {
+  outline: none;
+  /* border: 0.5px solid var(--vt-c-indigo); */
+  box-shadow: 0 0 0 1px rgb(255, 255, 255);
+}
+
 /* a,
 .green {
   text-decoration: none;

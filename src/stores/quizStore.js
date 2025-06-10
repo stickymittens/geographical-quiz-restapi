@@ -10,6 +10,7 @@ export const useQuizStore = defineStore('quiz', () => {
 
   const questionIndex = ref(1)
   const firstQuestion = ref(true)
+  const numberOfQuestionsValid = ref(true)
 
   const infiniteMode = ref(false)
   const numberOfQuestions = ref(20)
@@ -67,6 +68,8 @@ export const useQuizStore = defineStore('quiz', () => {
     firstQuestion.value = true
     questionIndex.value = 1
 
+    numberOfQuestionsValid.value = true
+
     infiniteMode.value = false
     numberOfQuestions.value = 20
     maxErrors.value = 3
@@ -82,7 +85,7 @@ export const useQuizStore = defineStore('quiz', () => {
     firstQuestion.value = true
     questionIndex.value = 1
 
-    // infiniteMode.value = false
+    // infiniteMode.value = falsex
     // numberOfQuestions.value = 20
     // maxErrors.value = 3
     errorsCount.value = 0
@@ -101,6 +104,7 @@ export const useQuizStore = defineStore('quiz', () => {
 
     infiniteMode,
     inifniteModeFunctionality,
+    numberOfQuestionsValid,
 
     numberOfQuestions,
     maxErrors,

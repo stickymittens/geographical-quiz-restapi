@@ -1,15 +1,17 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import QuizButtons from '@/components/QuizButtons.vue'
+// import QuizButtons from '@/components/QuizButtons.vue'
+// import { useQuizStore } from '@/stores/quizStore'
 
 const router = useRouter()
 
 const backgroundImg = ref(null)
 const quizzesWrapper = ref(null)
-const question = ref(null)
+// const question = ref(null)
 
-const buttonsDisabled = ref(null)
+// const buttonsDisabled = ref(null)
+// const quizStore = useQuizStore()
 
 //from endGame + remember to add teh same forceHomeReload in other components for thsi to refresh
 onMounted(() => {
@@ -40,7 +42,7 @@ const openPageAnimation = () => {
   if (elements) {
     const firstChild = elements[0]
     firstChild.style.transition = 'opacity 1s ease'
-    firstChild.style.transitionDelay = '2.6s'
+    firstChild.style.transitionDelay = '0.8s'
     firstChild.style.opacity = 1
 
     Array.from(elements)
@@ -49,12 +51,12 @@ const openPageAnimation = () => {
         setTimeout(() => {
           setTimeout(
             () => {
-              element.style.transition = 'opacity 0.5s ease'
+              element.style.transition = 'opacity 0.8s ease'
               element.style.opacity = 1
             },
             (index + 1) * 200,
           )
-        }, 1600)
+        }, 1200)
       })
   }
 }
@@ -89,7 +91,7 @@ const nextPageAnimation = () => {
               element.style.transition = 'opacity 0.5s ease'
               element.style.opacity = 0
             },
-            (index + 1) * 200,
+            (index + 1) * 150,
           )
         }, 0)
       })
@@ -98,18 +100,27 @@ const nextPageAnimation = () => {
   const el = quizzesWrapper.value
   if (el) {
     el.style.transition = 'width 1s ease'
-    el.style.transitionDelay = '1.75s'
+    el.style.transitionDelay = '1.5s'
     el.style.width = '100vw'
   }
 }
 
-const chooseQuiz = (quizName) => {
-  buttonsDisabled.value = true
-  nextPageAnimation()
+// const chooseQuiz = (quizName) => {
+//   quizStore.chosenQuiz = quizName
+//   buttonsDisabled.value = true
 
+//   nextPageAnimation()
+
+//   setTimeout(() => {
+//     router.replace(`/${quizName}/choose-quiz-mode`)
+//   }, 200)
+// }
+
+const play = () => {
+  nextPageAnimation()
   setTimeout(() => {
-    router.push(`/${quizName}/choose-quiz-mode`)
-  }, 2750)
+    router.replace(`/choose-quiz-mode`)
+  }, 200)
 }
 </script>
 
@@ -122,17 +133,18 @@ const chooseQuiz = (quizName) => {
 "
       />
     </div>
-    <div ref="quizzesWrapper" class="quizzes-wrapper">
-      <h1 ref="question">
+    <button @click="play()" id="play-btn">Play</button>
+    <!-- <div ref="quizzesWrapper" class="quizzes-wrapper"> -->
+    <!-- <h1 ref="question">
         Which quiz
         <span class="line-break"> </span>
         are you taking today?
       </h1>
-      <QuizButtons />
-      <!-- <div @click="chooseQuiz('capitals')" :class="['quiz', { disabled: buttonsDisabled }]">
+      <QuizButtons /> -->
+    <!-- <div @click="chooseQuiz('capitals')" :class="['quiz', { disabled: buttonsDisabled }]">
         Capitals
       </div>
-      <div @click="chooseQuiz('continents')" :class="['quiz', { disabled: buttonsDisabled }]">
+      <div @click="chooseQuiz('countries')" :class="['quiz', { disabled: buttonsDisabled }]">
         Continents
       </div>
       <div @click="chooseQuiz('population')" :class="['quiz', { disabled: buttonsDisabled }]">
@@ -141,8 +153,8 @@ const chooseQuiz = (quizName) => {
       <div @click="chooseQuiz('language')" :class="['quiz', { disabled: buttonsDisabled }]">
         Language
       </div> -->
-      <!-- quizzes wrapper -->
-    </div>
+    <!-- quizzes wrapper -->
+    <!-- </div> -->
   </div>
 </template>
 
@@ -151,8 +163,8 @@ const chooseQuiz = (quizName) => {
   position: relative;
 
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   gap: 10vh;
 
   min-height: 100vh;
@@ -178,14 +190,13 @@ img {
   bottom: 0;
 }
 
-.quizzes-wrapper {
+/* .quizzes-wrapper {
   position: absolute;
 
   right: 0;
 
   height: 100%;
   width: 0;
-  /* width: 65vw; */
 
   display: flex;
   flex-direction: column;
@@ -195,15 +206,13 @@ img {
 
   background-color: #749cd4;
   border-left: 0.5px #f1e2d6 solid;
-}
+} */
 
 /* @import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap'); */
-h1 {
+/* h1 {
   z-index: 10;
 
   opacity: 0;
-  /* opacity: 1; */
-  /* font-family: 'Caveat Brush', cursive; */
 
   text-align: center;
   font-style: italic;
@@ -214,10 +223,9 @@ h1 {
 
   margin-bottom: 2vh;
 
-  /* background-color: green; */
-}
+} */
 
-.line-break {
+/* .line-break {
   display: none;
 }
 
@@ -225,7 +233,6 @@ h1 {
   z-index: 10;
 
   opacity: 0;
-  /* opacity: 1; */
 
   color: black;
   background-color: #f1e2d6;
@@ -242,33 +249,47 @@ h1 {
   text-align: center;
 
   cursor: pointer;
-}
+} */
 
-.quiz:hover {
+/* .quiz:hover {
   color: white;
   background-color: #fab662;
 }
 
 .quiz.disabled {
-  pointer-events: none; /* prevent clicks */
-  /* opacity: 0.6; */
-  user-select: none; /* prevent text selection */
-  cursor: not-allowed; /* show disabled cursor */
-}
+  pointer-events: none;
+  user-select: none;
+  cursor: not-allowed;
+} */
 
 /* RESPONSIVE FONT MANAGEMENT */
-h1 {
-  font-size: clamp(1.2rem, 1.2vw + 1.4vh, 3.5rem);
+button {
+  font-size: clamp(2rem, 2vw + 1.4vh, 5rem);
 }
 
-.quiz {
-  font-size: clamp(1.2rem, 1.2vw + 1vh, 2rem);
+#play-btn {
+  padding: 1rem 2rem;
+  margin-right: 10vw;
+
+  font-weight: 800;
+  color: white;
+
+  background-color: #fab662;
+
+  border: 1px solid #f1e2d6;
+  border-radius: clamp(25px, 5vw, 48px);
+
+  cursor: pointer;
+
+  z-index: 10;
+
+  /* transition: all 0.5s ease; */
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .line-break {
-    display: block; /* Make it take up space like a line break */
-    width: 100%; /* Force it to break the line */
+    display: block; 
+    width: 100%;
   }
-}
+} */
 </style>

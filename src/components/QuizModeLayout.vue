@@ -16,17 +16,11 @@ const hovered = ref('')
 
 const quizName = computed(() => route.params.quizName)
 
-// //reset values by refreshing
-// function resetByRefreshing() {
-//   if (route.path.endsWith('/choose-quiz-mode')) {
-//     quizStore.resetQuizStore()
-//     router.replace('/choose-quiz-mode').then(() => {
-//       window.history.pushState(history.state, '', window.location.href)
-//     })
-//   }
-// }
-
-// resetByRefreshing()
+onMounted(() => {
+  if (route.path.endsWith('/choose-quiz-mode')) {
+    quizStore.resetToReplay()
+  }
+})
 
 const openPageAnimation = () => {
   const el = quizLayoutWrapper.value
@@ -75,28 +69,61 @@ const goNumberOfQuestionsMode = () => {
   quizStore.infiniteMode = false
 }
 
+const validateNumberOfquestion = () => {
+  quizStore.numberOfQuestionsValid = true
+
+  const number = quizStore.numberOfQuestions
+  if (number < 10 || number > 500) {
+    quizStore.numberOfQuestionsValid = false
+  }
+}
+
+const clearInput = () => {
+  quizStore.numberOfQuestions = ''
+}
+
 const nextPageAnimation = () => {
   const el = quizLayoutWrapper.value
   const img = backgroundImg.value
+  const btn = playBtn.value
 
   if (el) {
-    el.style.transition = 'left 1s ease-out'
-    el.style.left = '-100vw'
+    el.style.transition = 'opacity 0.5s ease-out'
+    el.style.opacity = '0'
+  }
 
-    if (img) {
-      img.style.transition = 'left 1s ease-out'
-      img.style.left = '-35vw'
-    }
+  if (img) {
+    img.style.transition = 'left 1s ease-out'
+    img.style.left = '-35vw'
+  }
+
+  if (btn) {
+    btn.style.transition = 'opacity 0.5s ease-out'
+    btn.style.opacity = '0'
   }
 }
 
 const startGame = () => {
-  nextPageAnimation()
-
-  setTimeout(() => {
-    router.push(`/${quizName.value}/quizzing`)
-    quizStore.isQuizInProgress = true
-  }, 1200)
+  if (quizStore.chosenQuiz !== null) {
+    if (quizStore.infiniteMode === false) {
+      validateNumberOfquestion()
+      if (quizStore.numberOfQuestionsValid !== false) {
+        nextPageAnimation()
+        setTimeout(() => {
+          router.push(`/${quizName.value}/quizzing`)
+          quizStore.isQuizInProgress = true
+        }, 1200)
+      }
+    } else {
+      nextPageAnimation()
+      setTimeout(() => {
+        router.push(`/${quizName.value}/quizzing`)
+        quizStore.isQuizInProgress = true
+      }, 1200)
+    }
+  } else {
+    alert('Please, choose a quiz type!')
+  }
 }
 </script>
 
@@ -126,12 +153,14 @@ const startGame = () => {
           Enter a number of questions <br />you want to answer
           <input
             v-model="quizStore.numberOfQuestions"
+            @blur="validateNumberOfquestion"
             id="number-of-questions-input"
+            @focus="clearInput"
             type="number"
-            min="10"
-            max="500"
             placeholder="10 - 500"
-          /><br />
+            :class="{ error: !quizStore.numberOfQuestionsValid }"
+          />
+          <br />
         </p>
 
         <p
@@ -194,6 +223,10 @@ const startGame = () => {
 <style scoped>
 .pointer {
   cursor: pointer;
+}
+
+h1 {
+  cursor: default;
 }
 
 .page-wrapper {
@@ -272,7 +305,40 @@ const startGame = () => {
   font-weight: 500;
   padding: 0.5rem 1rem;
   text-align: center;
+
+  /* border: 1px solid #f1e2d6; */
+
+  transition: all 0.5s ease;
+
+  /* caret-color: transparent; */
 }
+
+#number-of-questions-input.error {
+  color: #f44336ce;
+  background-color: #f4433608;
+  box-shadow: 0 0 0 2px #f44336ce;
+}
+
+#number-of-questions-input.error::placeholder {
+  transition: all 0.5s ease;
+}
+
+#number-of-questions-input::placeholder {
+  color: #f44336ce;
+}
+
+/* tiny input arrows */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* end of tiny input arrows */
 
 #infinity-mode-btn {
   border: 1px solid #eb5d3d;
@@ -337,7 +403,6 @@ input[type='radio']:not(:checked)::after {
 }
 
 #play-btn {
-  margin-left: 3vw;
   padding: 1rem 2rem;
 
   font-weight: 800;
@@ -352,6 +417,11 @@ input[type='radio']:not(:checked)::after {
 
   z-index: 1;
   opacity: 0;
+
+  transition: all 0.5s ease;
+}
+
+#play-btn:hover {
 }
 
 /* RESPONSIVE FONT MANAGEMENT */
@@ -399,7 +469,6 @@ input::placeholder {
   }
 
   .text-area {
-    /* width: 95vw; */
     gap: 3vh;
 
     padding-left: 7vw;
@@ -418,9 +487,7 @@ input::placeholder {
   }
 
   #play-btn {
-    margin-left: 0;
     width: 80vw;
-    /* width: 95vw; */
   }
 }
 
@@ -434,7 +501,6 @@ input::placeholder {
   }
 
   #play-btn {
-    margin-left: 0;
     width: 90vw;
   }
 }

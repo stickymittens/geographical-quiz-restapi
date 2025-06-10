@@ -226,6 +226,7 @@ ul {
 
 li:hover {
   color: #eb5d3d;
+  cursor: pointer;
 }
 
 #home-page {

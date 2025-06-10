@@ -81,11 +81,17 @@ function changeOptionColors() {
     if (chosenOption === 1) {
       option1.style.color = 'red'
       value1.style.color = 'red'
+
       option2.style.color = 'green'
+      option2.style.opacity = '0.5'
       value2.style.color = 'green'
+      value2.style.opacity = '0.5'
     } else if (chosenOption === 2) {
       option1.style.color = 'green'
+      option1.style.opacity = '0.5'
       value1.style.color = 'green'
+      value1.style.opacity = '0.5'
+
       option2.style.color = 'red'
       value2.style.color = 'red'
     }
@@ -103,7 +109,7 @@ function replaySameSettings() {
 
 function replayDiffSettings() {
   quizStore.resetQuizStore()
-  router.replace(`/${quizName}/choose-quiz-mode`)
+  router.replace(`/choose-quiz-mode`)
 }
 </script>
 
@@ -139,7 +145,7 @@ function replayDiffSettings() {
           <p :ref="(el) => (option1Refs[index] = el)" class="option1">
             {{ item.option1 }}
           </p>
-          <p :ref="(el) => (optionValue1Refs[index] = el)" class="option-value-1">
+          <p :ref="(el) => (optionValue1Refs[index] = el)" class="option-value1">
             {{ item.optionValue1 }}
           </p>
         </div>
@@ -147,8 +153,9 @@ function replayDiffSettings() {
           <p :ref="(el) => (option2Refs[index] = el)" class="option2">
             {{ item.option2 }}
           </p>
-          <p :ref="(el) => (optionValue2Refs[index] = el)" class="option-value-2">
+          <p :ref="(el) => (optionValue2Refs[index] = el)" class="option-value2">
             {{ item.optionValue2 }}
+            <!-- Afrikaans, English, Southern Ndebele, Northern Sotho and Southern Sotho -->
           </p>
         </div>
       </div>
@@ -278,18 +285,16 @@ incorrect #f44336ce */
   background-color: #f1e2d6;
 
   border: 3px solid transparent;
-
-  font-size: clamp(1.2rem, 1.5vw + 0.5vh, 2.5rem);
 }
 
-.option-value-1,
-.option-value-2 {
+.option-value1,
+.option-value2 {
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
 
-  height: 3rem;
+  height: 10rem;
   width: 25vw;
 
   border-radius: 25px;
@@ -403,9 +408,14 @@ incorrect #f44336ce */
   font-size: clamp(0.875rem, 0.7vw + 0.7vh, 1rem);
 }
 
-.option-value-1,
-.option-value-2 {
-  font-size: clamp(0.875rem, 1.2vw + 0.8vh, 2.4rem);
+.option1,
+.option2 {
+  font-size: clamp(0.875rem, 1.2vw + 1vh, 2.5rem);
+}
+
+.option-value1,
+.option-value2 {
+  font-size: clamp(0.875rem, 1.2vw + 0.8vh, 2.3rem);
 }
 
 @media (max-width: 1024px) {
@@ -423,13 +433,11 @@ incorrect #f44336ce */
   .option1,
   .option2 {
     width: 35vw;
-    /* margin: 2vh 2vw; */
   }
 
-  .option-value-1,
-  .option-value-2 {
+  .option-value1,
+  .option-value2 {
     width: 35vw;
-    /* margin: 2vh 2vw; */
   }
 }
 
@@ -447,13 +455,11 @@ incorrect #f44336ce */
   .option1,
   .option2 {
     width: 44vw;
-    /* margin: 2vh 2vw; */
   }
 
-  .option-value-1,
-  .option-value-2 {
+  .option-value1,
+  .option-value2 {
     width: 44vw;
-    /* margin: 2vh 2vw; */
   }
 }
 </style>

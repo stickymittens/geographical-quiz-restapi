@@ -24,10 +24,13 @@ export const useCountryStore = defineStore('country', {
 
         // Calculate and log the longest name
         // const longest = this.countries.reduce(
-        //   (longest, country) => (country.name.length > longest.length ? country.name : longest),
+        //   (longest, country) =>
+        //     country.languages.length > longest.length ? country.languages : longest,
         //   '',
         // )
         // console.log(`Longest country name: "${longest}" (${longest.length} characters)`)
+
+        // console.log(typeof this.countries.languages)
       } catch (error) {
         console.error('Error fetching countries:', error)
       }

@@ -12,6 +12,9 @@ const quizStore = useQuizStore()
 const quizzesWrapper = ref(null)
 
 const chooseQuiz = (quizName) => {
+  console.log(quizName)
+
+  quizStore.chosenQuiz = quizName
   quizStore.resetToReplay()
   router.replace(`/${quizName}/choose-quiz-mode`)
 }
@@ -59,6 +62,7 @@ const chooseQuiz = (quizName) => {
 <style scoped>
 .quizzes-wrapper {
   display: flex;
+
   justify-content: center;
   align-items: center;
   gap: 1vw;
@@ -88,7 +92,7 @@ const chooseQuiz = (quizName) => {
   cursor: pointer;
   opacity: 1;
 
-  transition: opacity 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .quiz:hover,

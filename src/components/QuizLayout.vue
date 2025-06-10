@@ -94,8 +94,8 @@ const openPageAnimation = () => {
   const el1 = shadowBox.value
 
   if (el1) {
-    el1.style.transition = 'left 1s ease-out'
-    el1.style.left = 'auto'
+    el1.style.transition = 'opacity 0.5s ease-out'
+    el1.style.opacity = '1'
   }
 }
 
@@ -317,12 +317,13 @@ watch(
   border-left: 0.5px solid #f1e2d6;
 
   height: 100%;
+
+  z-index: 0;
 }
 
 .shadow-box {
-  position: absolute;
-  left: 100vw;
-  /* left: auto; */
+  z-index: 10;
+  opacity: 0;
 
   width: 44vw;
   height: 60vh;
@@ -346,7 +347,7 @@ watch(
 
   display: flex;
   flex-direction: column;
-  gap: 1vh;
+  gap: 2vh;
 
   padding: 2rem 2rem 3rem 2rem;
 
@@ -494,13 +495,13 @@ h1 {
   font-size: clamp(0.95rem, 1.2vw + 0.4vh, 2.4rem);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .shadow-box {
-    width: 90vw;
+    width: 70vw;
   }
 
   .option-btn {
-    width: 44vw;
+    width: 40vw;
   }
 
   .question {
@@ -515,7 +516,7 @@ h1 {
   }
 
   .question {
-    height: 20vh;
+    margin-top: 2vh;
 
     /* background-color: pink; */
   }

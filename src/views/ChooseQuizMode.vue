@@ -1,12 +1,17 @@
 <script setup>
-import { defineProps } from 'vue'
+// import { defineProps } from 'vue'
 import QuizModeLayout from '@/components/QuizModeLayout.vue'
+import { useQuizStore } from '@/stores/quizStore'
 
-const props = defineProps({
-  quiz: String,
-})
+// const props = defineProps({
+//   quiz: String,
+// })
 
-console.log('Chosen quiz:', props.quiz)
+// console.log('Chosen quiz:', props.quiz)
+
+const quizStore = useQuizStore()
+
+console.log(quizStore.chosenQuiz)
 </script>
 
 <template>

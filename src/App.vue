@@ -19,4 +19,10 @@ import NavBar from './components/NavBar.vue'
   top: 0;
   left: 0;
 }
+
+input:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: var(--color-border-hover); /* Optional: custom focus border */
+}
 </style>
