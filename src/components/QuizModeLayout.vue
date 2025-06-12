@@ -8,6 +8,8 @@ const quizStore = useQuizStore()
 const router = useRouter()
 const route = useRoute()
 
+const pageWrapper = ref(null)
+
 const quizLayoutWrapper = ref(null)
 const backgroundImg = ref(null)
 const playBtn = ref(null)
@@ -26,28 +28,36 @@ const openPageAnimation = () => {
   const el = quizLayoutWrapper.value
   const img = backgroundImg.value
   const btn = playBtn.value
+  const pageWrap = pageWrapper.value
 
   if (img) {
-    img.style.transition = 'left 0.5s ease-out'
+    img.style.transition = 'left 0.7s ease-out'
     img.style.left = '80vw'
   }
 
   if (el) {
-    el.style.transition = 'opacity 1s ease-out'
+    el.style.transition = 'opacity 0.3s ease'
+    el.style.transitionDelay = '0.3s'
     el.style.opacity = '1'
   }
 
   if (btn) {
-    btn.style.transition = 'opacity 1s ease-out'
+    btn.style.transition = 'opacity 0.3s ease'
+    el.style.transitionDelay = '0.3s'
     btn.style.opacity = '1'
+  }
+
+  if (pageWrap) {
+    // pageWrap.style.transition = 'backgroundColor 1s ease forwards'
+    pageWrap.style.backgroundColor = '#749cd4'
   }
 }
 
-onMounted(() => {
-  setTimeout(() => {
-    openPageAnimation()
-  }, 100)
-})
+// onMounted(() => {
+//   setTimeout(() => {
+//     openPageAnimation()
+//   }, 100)
+// })
 
 onMounted(() => {
   const route = useRoute()
@@ -87,18 +97,20 @@ const nextPageAnimation = () => {
   const img = backgroundImg.value
   const btn = playBtn.value
 
-  if (el) {
-    el.style.transition = 'opacity 0.5s ease-out'
-    el.style.opacity = '0'
-  }
-
   if (img) {
-    img.style.transition = 'left 1s ease-out'
+    img.style.transition = 'left 0.7s ease-out'
     img.style.left = '-35vw'
   }
 
+  if (el) {
+    el.style.transition = 'opacity 0.3s ease-in'
+    el.style.transitionDelay = '0.7s'
+    el.style.opacity = '0'
+  }
+
   if (btn) {
-    btn.style.transition = 'opacity 0.5s ease-out'
+    btn.style.transition = 'opacity 0.3s ease-in'
+    el.style.transitionDelay = '0.7s'
     btn.style.opacity = '0'
   }
 }
@@ -112,14 +124,14 @@ const startGame = () => {
         setTimeout(() => {
           router.push(`/${quizName.value}/quizzing`)
           quizStore.isQuizInProgress = true
-        }, 1200)
+        }, 1100)
       }
     } else {
       nextPageAnimation()
       setTimeout(() => {
         router.push(`/${quizName.value}/quizzing`)
         quizStore.isQuizInProgress = true
-      }, 1200)
+      }, 1100)
     }
   } else {
     alert('Please, choose a quiz type!')
@@ -128,7 +140,7 @@ const startGame = () => {
 </script>
 
 <template>
-  <div class="page-wrapper">
+  <div ref="pageWrapper" class="page-wrapper">
     <img
       ref="backgroundImg"
       id="background-image"
@@ -237,6 +249,9 @@ h1 {
   justify-content: center;
   align-items: center;
   overflow: hidden;
+
+  transition: all 1.5s ease;
+  background-color: #2f4e9f;
 }
 
 #background-image {
@@ -419,9 +434,6 @@ input[type='radio']:not(:checked)::after {
   opacity: 0;
 
   transition: all 0.5s ease;
-}
-
-#play-btn:hover {
 }
 
 /* RESPONSIVE FONT MANAGEMENT */

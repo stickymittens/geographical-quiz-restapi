@@ -11,6 +11,9 @@ const router = useRouter()
 const endGame = route.params.endGame
 const quizName = route.params.quizName
 
+//openpage animation
+const youWonLost = ref(null)
+
 //funct changing colors
 const option1Refs = ref([])
 const option2Refs = ref([])
@@ -59,6 +62,52 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('beforeunload', handleBeforeUnload)
   window.removeEventListener('popstate', handleBackButton)
+})
+
+//OPEN PAGE ANIMATION
+const openPageAnimation = () => {
+  const banner = youWonLost.value
+
+  if (banner) {
+    // Animate the banner from the left
+    banner.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out'
+    banner.style.transform = 'translateX(0)'
+    banner.style.opacity = '1'
+  }
+
+  const bannerTexts1 = document.querySelectorAll('.banner-text-1')
+  bannerTexts1.forEach((text) => {
+    text.style.transition = 'opacity 0.3s ease-out'
+    text.style.transitionDelay = '0.6s'
+    text.style.opacity = '1'
+  })
+
+  const bannerTexts2 = document.querySelectorAll('.banner-text-2')
+  bannerTexts2.forEach((text) => {
+    text.style.transition = 'opacity 0.3s ease-out'
+    text.style.transitionDelay = '0.9s'
+    text.style.opacity = '1'
+  })
+
+  const optionBlocks = document.querySelectorAll('.options')
+  optionBlocks.forEach((block) => {
+    block.style.transition = 'opacity 0.4s ease-out'
+    block.style.transitionDelay = '1.4s'
+    block.style.opacity = '1'
+  })
+
+  const arrows = document.querySelectorAll('.arrows')
+  arrows.forEach((arrow) => {
+    arrow.style.transition = 'opacity 0.4s ease-out'
+    arrow.style.transitionDelay = '1.8s'
+    arrow.style.opacity = '1'
+  })
+}
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    openPageAnimation()
+  })
 })
 
 //inifnity - current & best score
@@ -111,21 +160,62 @@ function replayDiffSettings() {
   quizStore.resetQuizStore()
   router.replace(`/choose-quiz-mode`)
 }
+
+//ARROWS
+// const optionsWrap = document.querySelector('.options-wrap')
+// const arrowLeft = document.getElementById('arrow1')
+// const arrowRight = document.getElementById('arrow2')
+
+// if (optionsWrap && arrowLeft && arrowRight) {
+//   function updateArrowVisibility() {
+//     const canScrollLeft = optionsWrap.scrollLeft > 0
+//     const canScrollRight =
+//       optionsWrap.scrollWidth > optionsWrap.clientWidth + optionsWrap.scrollLeft
+
+//     arrowLeft.style.display = canScrollLeft ? 'block' : 'none'
+//     arrowRight.style.display = canScrollRight ? 'block' : 'none'
+
+//     if (canScrollLeft || canScrollRight) {
+//       optionsWrap.classList.add('scrollable')
+//     } else {
+//       optionsWrap.classList.remove('scrollable')
+//     }
+//   }
+
+//   function scrollOptions(direction) {
+//     const scrollAmount = optionsWrap.clientWidth * 0.8
+//     optionsWrap.scrollBy({
+//       left: direction === 'left' ? -scrollAmount : scrollAmount,
+//       behavior: 'smooth',
+//     })
+//   }
+
+//   arrowLeft.addEventListener('click', () => scrollOptions('left'))
+//   arrowRight.addEventListener('click', () => scrollOptions('right'))
+//   optionsWrap.addEventListener('scroll', updateArrowVisibility)
+//   window.addEventListener('resize', updateArrowVisibility)
+
+//   updateArrowVisibility()
+// }
+
+//ARROWS END
 </script>
 
 <template>
   <div class="wrapper">
-    <div v-if="endGame === 'you-won'" class="won">
-      <h1>You won</h1>
-      <h2>YOUR SCORE: {{ currentScore }}</h2>
-    </div>
+    <div ref="youWonLost" class="banner">
+      <div v-if="endGame === 'you-won'" class="won">
+        <h1 class="banner-text-1">You won</h1>
+        <h2 class="banner-text-2">YOUR SCORE: {{ currentScore }}</h2>
+      </div>
 
-    <div v-if="endGame === 'you-lost'" class="lost">
-      <h1>You Lost</h1>
-      <h2>
-        YOUR SCORE:
-        {{ currentScore }}
-      </h2>
+      <div v-if="endGame === 'you-lost'" class="lost">
+        <h1 class="banner-text-1">You Lost 😔</h1>
+        <h2 class="banner-text-2">
+          YOUR SCORE:
+          {{ currentScore }}
+        </h2>
+      </div>
     </div>
 
     <div v-if="endGame === 'save-infinity-score'" class="infinity-mode-wrapper">
@@ -138,9 +228,8 @@ function replayDiffSettings() {
     </div>
 
     <div v-if="quizStore.incorrectsArray.length > 0" class="options-wrap">
-      <!-- <p id="arrow1">&#8592;</p> -->
-      <!-- <p id="arrow2">&#8592;</p> -->
       <div v-for="(item, index) in quizStore.incorrectsArray" :key="index" class="options">
+        <div class="arrow-left arrows" v-if="index !== 0">&#8592;</div>
         <div class="wrapper-option-1">
           <p :ref="(el) => (option1Refs[index] = el)" class="option1">
             {{ item.option1 }}
@@ -158,9 +247,12 @@ function replayDiffSettings() {
             <!-- Afrikaans, English, Southern Ndebele, Northern Sotho and Southern Sotho -->
           </p>
         </div>
+        <div class="arrow-right arrows" v-if="index !== quizStore.incorrectsArray.length - 1">
+          &#8594;
+        </div>
       </div>
     </div>
-    <div v-else>No errors</div>
+    <div v-else id="no-errors">🎉 No errors 🎉</div>
 
     <div class="replay">
       <div class="replay-wrapper">
@@ -192,7 +284,7 @@ incorrect #f44336ce */
   justify-content: space-between;
 
   background-color: #749cd4;
-  /* background-color: pink; */
+  /* background-color: yellow; */
 
   overflow: hidden;
 }
@@ -201,15 +293,29 @@ incorrect #f44336ce */
   width: 100vw;
 }
 
+.banner {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.banner-text-1 {
+  font-weight: 600;
+}
+
+.banner-text-1,
+.banner-text-2 {
+  opacity: 0;
+}
+
 .won,
 .lost,
 .infinity-mode,
 #new-best {
   text-align: center;
-  margin: 5vh 0;
+
   padding: 2vh 0;
 
-  width: 100%;
+  width: 100vw;
   background-color: #f1e2d6;
   color: #633851;
 }
@@ -223,7 +329,6 @@ incorrect #f44336ce */
   width: 100vw;
 
   display: flex;
-  /* gap: 5vw; */
 
   overflow-x: scroll;
   scroll-snap-type: x mandatory; /* Change this to mandatory */
@@ -233,7 +338,9 @@ incorrect #f44336ce */
   scroll-padding-right: 10vw; /* Ensures items stay away from left edge */
   padding: 0 10vw;
 
-  margin-bottom: 5vh;
+  margin: 2vh 0;
+
+  /* background-color: pink; */
 }
 
 .options-wrap {
@@ -244,6 +351,8 @@ incorrect #f44336ce */
 }
 
 .options {
+  position: relative;
+
   display: flex;
   justify-content: center;
   /* background-color: darkblue; */
@@ -254,6 +363,8 @@ incorrect #f44336ce */
   flex-shrink: 0; /* Prevent shrinking if content overflows */
 
   margin-right: 10vw;
+
+  opacity: 0;
 }
 
 .optionsValues {
@@ -312,14 +423,15 @@ incorrect #f44336ce */
   background-color: #2f4d9d;
 
   width: 100%;
-  height: 15vh;
+  height: max-content;
+  padding: 2vh 0 1vh 0;
 
   border-top: 0.5px #f1e2d6 solid;
 
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 4vw;
+  gap: 10vw;
 }
 
 .diff-settings-wrapper,
@@ -396,6 +508,68 @@ incorrect #f44336ce */
   cursor: not-allowed;
 }
 
+#no-errors {
+  top: 50%;
+  transform: translateY(-50%);
+
+  color: white;
+  opacity: 1;
+
+  background-color: #fab662;
+  width: 100vw;
+  text-align: center;
+}
+
+/*ARROWS*/
+
+.arrow-left,
+.arrow-right {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-55%);
+
+  font-size: 2rem;
+  color: #f1e2d67e;
+
+  cursor: pointer;
+  z-index: 10;
+}
+
+.arrow-left {
+  left: 0;
+}
+
+.arrow-right {
+  right: 0;
+}
+
+/* Always show arrows on small screens if scrollable */
+
+/* Only show on hover if scrollable */
+/* @media (min-width: 769px) {
+  .options-wrap.scrollable:hover .arrow-left,
+  .options-wrap.scrollable:hover .arrow-right {
+    display: block;
+  }
+} */
+
+/* Always show arrows on small screens if scrollable */
+@media (max-width: 430px) {
+  .arrow-left,
+  .arrow-right {
+    font-size: 1rem;
+  }
+}
+
+@media ((min-width: 431px) and (max-width: 768px)) {
+  .arrow-left,
+  .arrow-right {
+    font-size: 1.5rem;
+  }
+}
+
+/*ARROWS END */
+
 /* RESPONSIVE FONT MANAGEMENT */
 #replay-btn,
 #diff-settings-btn,
@@ -416,6 +590,10 @@ incorrect #f44336ce */
 .option-value1,
 .option-value2 {
   font-size: clamp(0.875rem, 1.2vw + 0.8vh, 2.3rem);
+}
+
+#no-errors {
+  font-size: clamp(2rem, 3vw + 4vh, 5rem);
 }
 
 @media (max-width: 1024px) {

@@ -18,6 +18,7 @@ const quizName = computed(() => route.params.quizName)
 const shadowBox = ref(null)
 const optionBtns = ref(null)
 const backgroundImg = ref(null)
+const backBtn = ref(null)
 
 const props = defineProps({
   question: String,
@@ -92,24 +93,44 @@ onUnmounted(() => {
 //OPEN PAGE ANIMATION
 const openPageAnimation = () => {
   const el1 = shadowBox.value
+  const btn = backBtn.value
 
   if (el1) {
-    el1.style.transition = 'opacity 0.5s ease-out'
+    el1.style.transition = 'opacity 0.4s ease-out'
+    el1.style.transitonDelay = '0s'
     el1.style.opacity = '1'
   }
-}
 
-// onMounted(() => {
-//   setTimeout(() => {
-//     openPageAnimation()
-//   }, 1)
-// })
+  if (btn) {
+    btn.style.transition = 'opacity 0.5s ease-in-out'
+    btn.style.transitonDelay = '5s'
+    btn.style.opacity = '1'
+  }
+}
 
 requestAnimationFrame(() => {
   requestAnimationFrame(() => {
     openPageAnimation()
   })
 })
+
+//nextpage animation 2000ms
+const nextPageAnimation = () => {
+  const el1 = shadowBox.value
+  const img = backgroundImg.value
+
+  if (el1) {
+    el1.style.transition = 'opacity 0.5s ease-in-out'
+    el1.style.transitionDelay = '0.5s'
+    el1.style.opacity = '0'
+  }
+
+  if (img) {
+    img.style.transition = 'left 0.6s ease-out'
+    img.style.transitionDelay = '1.2s'
+    img.style.left = '100vw'
+  }
+}
 
 const emit = defineEmits(['answer-selected'])
 
@@ -196,43 +217,49 @@ watch(
       if (quizStore.infiniteMode === true) {
         if (quizStore.maxErrors === '0') {
           if (errorsCount >= 1) {
+            nextPageAnimation()
             quizStore.isQuizInProgress = false
             setTimeout(() => {
               router.push(`/${quizName.value}/you-lost`)
-            }, 500)
+            }, 2100)
           }
         } else {
           if (errorsCount >= quizStore.maxErrors) {
+            nextPageAnimation()
             quizStore.isQuizInProgress = false
             setTimeout(() => {
               router.push(`/${quizName.value}/you-lost`)
-            }, 500)
+            }, 2100)
           }
         }
       } else if (quizStore.infiniteMode === false) {
         if (quizStore.maxErrors === '0') {
           if (errorsCount >= 1) {
+            nextPageAnimation()
             quizStore.isQuizInProgress = false
             setTimeout(() => {
               router.push(`/${quizName.value}/you-lost`)
-            }, 500)
+            }, 2100)
           } else if (quizStore.numberOfQuestions === questionIndex - 1) {
+            nextPageAnimation()
             quizStore.isQuizInProgress = false
             setTimeout(() => {
               router.push(`/${quizName.value}/you-won`)
-            }, 500)
+            }, 2100)
           }
         } else if (quizStore.maxErrors > 0) {
           if (errorsCount >= quizStore.maxErrors) {
+            nextPageAnimation()
             quizStore.isQuizInProgress = false
             setTimeout(() => {
               router.push(`/${quizName.value}/you-lost`)
-            }, 500)
+            }, 2100)
           } else if (quizStore.numberOfQuestions === questionIndex - 1) {
+            nextPageAnimation()
             quizStore.isQuizInProgress = false
             setTimeout(() => {
               router.push(`/${quizName.value}/you-won`)
-            }, 500)
+            }, 2100)
           }
         }
       }
@@ -285,11 +312,13 @@ watch(
         id="infinity-button"
         @click="saveInfinityScore"
       >
-        Save current score
+        <span> Save current score</span>
       </button>
       <!-- shadow box -->
     </div>
-    <button @click="handleBackButton" class="go-back">&#8592; Back to settings</button>
+    <button ref="backBtn" @click="handleBackButton" class="go-back">
+      <span>&#8592; Back to settings</span>
+    </button>
     <!-- page wrapper -->
   </div>
 </template>
@@ -326,13 +355,10 @@ watch(
   opacity: 0;
 
   width: 44vw;
-  height: 60vh;
+  height: 55vh;
 
   display: flex;
   flex-direction: column;
-  gap: 2vh;
-
-  /* background-color: aquamarine; */
 
   background-color: none;
 }
@@ -347,9 +373,9 @@ watch(
 
   display: flex;
   flex-direction: column;
-  gap: 2vh;
+  gap: 1.5vh;
 
-  padding: 2rem 2rem 3rem 2rem;
+  padding: 1.2rem 1.5rem 2rem 1.5rem;
 
   background-color: #f1e2d6;
   color: #283d3b;
@@ -371,10 +397,8 @@ watch(
   justify-content: center;
   align-items: center;
 
-  height: 25vh;
-  /* padding: 5vh 3vw; */
-  /* margin-top: 2vh; */
-  /* background-color: pink; */
+  height: 18vh;
+  font-size: clamp(1rem, 1vw + 1vh, 2.4rem);
 }
 
 .errors {
@@ -407,17 +431,19 @@ ul {
 .option-btn {
   flex-shrink: 0;
 
-  height: 8rem;
-  width: 25vw;
+  height: 6rem;
+  width: 20vw;
+  padding: 0.4rem 0.8rem;
 
   border-radius: 25px;
-  padding: 0.5rem 1rem;
 
   background-color: #f1e2d6;
 
   cursor: pointer;
 
-  border: 3px solid transparent;
+  border: 5px solid transparent;
+
+  transition: border 0.3s ease;
 }
 
 .option-btn:hover:not(.correct):not(.incorrect) {
@@ -434,6 +460,7 @@ ul {
 
 #infinity-button,
 .go-back {
+  position: relative; /* needed for inner text positioning */
   width: max-content;
 
   color: black;
@@ -442,50 +469,82 @@ ul {
   border-radius: 50px;
   border: none;
 
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
+
   margin-top: 0;
   margin-bottom: 0;
-  transition:
-    padding 0.3s ease,
-    margin 0.3s ease;
 
   cursor: pointer;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease;
 }
 
+/* Border only on infinity button */
 #infinity-button {
   align-self: center;
   border: 0.5px solid #fab662;
+
+  opacity: 0.5;
 }
 
 .go-back {
   position: absolute;
   bottom: 3vh;
   left: 3vw;
+
+  opacity: 0;
+  border: none;
 }
 
+/* Inner span for text */
+#infinity-button > span,
+.go-back > span {
+  position: relative; /* keep text in place */
+  z-index: 2;
+
+  display: inline-block;
+  user-select: none;
+  pointer-events: none;
+
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease,
+    font-weight 0.3s ease;
+  color: inherit;
+  font-weight: normal;
+}
+
+/* Hover states for both buttons */
 #infinity-button:hover,
 .go-back:hover {
   background-color: #fab662;
   color: #f1e2d6;
 
-  padding-left: calc(1rem + 1vw);
-  padding-right: calc(1rem + 1vw);
+  transform: scale(1.05);
+  opacity: 1;
+}
 
-  margin-top: -0.5rem;
-  margin-bottom: -0.5rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-
+/* Inverse scale on text to keep size stable */
+#infinity-button:hover > span,
+.go-back:hover > span {
+  transform: scale(0.95);
   font-weight: 500;
 }
 
 /* RESPONSIVE FONT MANAGEMENT  */
-h1 {
-  font-size: clamp(1.1rem, 1.5vw + 1.5vh, 3.2rem);
+/* h1 {
+  font-size: clamp(1.1rem, 1.5vw + 1.2vh, 3.2rem);
+} */
+
+.question {
+  font-size: clamp(1rem, 1vw + 1vh, 2.4rem);
 }
 
 .option-btn {
-  font-size: clamp(1.2rem, 1.5vw + 0.5vh, 2.5rem);
+  font-size: clamp(1rem, 1.2vw + 0.5vh, 2rem);
 }
 
 .errors,
@@ -498,15 +557,40 @@ h1 {
 @media (max-width: 1024px) {
   .shadow-box {
     width: 70vw;
+    height: 65vh;
   }
 
   .option-btn {
     width: 40vw;
+    height: 7rem;
   }
 
   .question {
     height: 10vh;
-    /* padding: 3vh 3vw; */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .wrapper {
+    align-items: flex-end;
+  }
+
+  .shadow-box {
+    width: 70vw;
+    /* height: auto; */
+    /* margin-top: 5vh; */
+    gap: 3vh;
+  }
+
+  .question {
+    height: auto;
+    margin: 2vh 0;
+  }
+
+  .option-btn {
+    width: 35vw;
+    height: 6rem;
+    font-size: clamp(1rem, 1.2vw + 0.5vh, 2rem);
   }
 }
 
@@ -515,10 +599,14 @@ h1 {
     gap: 2vh;
   }
 
+  .text-area {
+    padding: 1.5rem;
+    gap: 1.5vh;
+  }
+
   .question {
     margin-top: 2vh;
-
-    /* background-color: pink; */
+    height: auto;
   }
 }
 </style>

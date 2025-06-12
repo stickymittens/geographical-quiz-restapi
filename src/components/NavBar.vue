@@ -1,7 +1,7 @@
 <script setup>
 import { useQuizStore } from '@/stores/quizStore'
 import { useRouter, useRoute } from 'vue-router'
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 
 const quizStore = useQuizStore()
 const router = useRouter()
@@ -50,7 +50,7 @@ function homePageBtn() {
 
 function goToChooseQuizMode() {
   if (route.path.endsWith('/choose-quiz-mode')) {
-    if (width.value <= 430) {
+    if (width.value < 768) {
       toggleNavBarSmallDevices()
     }
     quizStore.resetQuizStore()
@@ -64,7 +64,7 @@ function goToChooseQuizMode() {
         window.history.pushState(history.state, '', window.location.href)
         return
       } else {
-        if (width.value <= 430) {
+        if (width.value < 768) {
           toggleNavBarSmallDevices()
         }
         quizStore.resetQuizStore()
@@ -73,7 +73,7 @@ function goToChooseQuizMode() {
         })
       }
     } else {
-      if (width.value <= 430) {
+      if (width.value < 768) {
         toggleNavBarSmallDevices()
       }
       quizStore.resetQuizStore()
@@ -99,10 +99,16 @@ function toggleNavBarSmallDevices() {
     })
   }
 }
+
+watch(width, () => {
+  if (width.value >= 768) {
+    quizStore.isSmallDevicesNavBarVisible = false
+  }
+})
 </script>
 
 <template>
-  <div v-if="width > 430" class="navbar-wrapper">
+  <div v-if="width >= 768" class="navbar-wrapper">
     <ul>
       <li id="home-page" @click="homePageBtn">Home Page</li>
       <li>How to play?</li>
@@ -125,7 +131,7 @@ function toggleNavBarSmallDevices() {
       ref="navBarSmallDevices"
       :class="['navbar-small-devices', { visible: quizStore.isSmallDevicesNavBarVisible }]"
     >
-      <ul class="ul-small-devices">
+      <ul :class="['ul-small-devices', { visible: quizStore.isSmallDevicesNavBarVisible }]">
         <li @click="homePageBtn" class="li-small-devices">Home Page</li>
         <li class="li-small-devices">How to play?</li>
         <li @click="goToChooseQuizMode" class="li-small-devices">Quizzes and Settings</li>
@@ -140,6 +146,7 @@ function toggleNavBarSmallDevices() {
 
   width: 100vw;
   height: 8vh;
+  padding: 1rem 0;
 
   display: flex;
   align-items: center;
@@ -159,6 +166,8 @@ function toggleNavBarSmallDevices() {
   display: flex;
   flex-direction: column;
   gap: 5px;
+
+  cursor: pointer;
 }
 
 .hamburger-menu-item {
@@ -232,8 +241,5 @@ li:hover {
 #home-page {
   position: absolute;
   left: 5vw;
-}
-
-@media (max-width: 768px) {
 }
 </style>

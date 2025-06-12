@@ -1,17 +1,12 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
-// import QuizButtons from '@/components/QuizButtons.vue'
-// import { useQuizStore } from '@/stores/quizStore'
 
 const router = useRouter()
 
 const backgroundImg = ref(null)
-const quizzesWrapper = ref(null)
-// const question = ref(null)
-
-// const buttonsDisabled = ref(null)
-// const quizStore = useQuizStore()
+const playBtn = ref(null)
+const layer = ref(null)
 
 //from endGame + remember to add teh same forceHomeReload in other components for thsi to refresh
 onMounted(() => {
@@ -24,40 +19,19 @@ onMounted(() => {
 })
 
 const openPageAnimation = () => {
-  const el1 = backgroundImg.value
-  if (el1) {
-    el1.style.transition = 'left 1s ease'
-    el1.style.transitionDelay = '0.5s'
-    el1.style.left = '-25vw'
+  const img = backgroundImg.value
+  const btn = playBtn.value
+
+  if (img) {
+    img.style.transition = 'left 1.1s ease-out'
+    img.style.transitionDelay = '0.3s'
+    img.style.left = '-10vw'
   }
 
-  const el2 = quizzesWrapper.value
-  if (el2) {
-    el2.style.transition = 'width 1s ease'
-    el2.style.transitionDelay = '0.5s'
-    el2.style.width = '65vw'
-  }
-
-  const elements = quizzesWrapper.value?.children
-  if (elements) {
-    const firstChild = elements[0]
-    firstChild.style.transition = 'opacity 1s ease'
-    firstChild.style.transitionDelay = '0.8s'
-    firstChild.style.opacity = 1
-
-    Array.from(elements)
-      .slice(1)
-      .forEach((element, index) => {
-        setTimeout(() => {
-          setTimeout(
-            () => {
-              element.style.transition = 'opacity 0.8s ease'
-              element.style.opacity = 1
-            },
-            (index + 1) * 200,
-          )
-        }, 1200)
-      })
+  if (btn) {
+    btn.style.transition = 'opacity 0.2s ease'
+    btn.style.transitionDelay = '0.9s'
+    btn.style.opacity = '1'
   }
 }
 
@@ -74,58 +48,49 @@ onMounted(() => {
   }
 })
 
-const nextPageAnimation = () => {
-  const elements = quizzesWrapper.value?.children
-
-  if (elements) {
-    const firstChild = elements[0]
-    firstChild.style.transition = 'opacity 1s ease'
-    firstChild.style.opacity = 0
-
-    Array.from(elements)
-      .slice(1)
-      .forEach((element, index) => {
-        setTimeout(() => {
-          setTimeout(
-            () => {
-              element.style.transition = 'opacity 0.5s ease'
-              element.style.opacity = 0
-            },
-            (index + 1) * 150,
-          )
-        }, 0)
-      })
-  }
-
-  const el = quizzesWrapper.value
-  if (el) {
-    el.style.transition = 'width 1s ease'
-    el.style.transitionDelay = '1.5s'
-    el.style.width = '100vw'
+const displayLayer = () => {
+  if (layer.value) {
+    layer.value.style.opacity = '0.3'
+  } else {
+    console.warn('layer not yet mounted')
   }
 }
 
-// const chooseQuiz = (quizName) => {
-//   quizStore.chosenQuiz = quizName
-//   buttonsDisabled.value = true
+const hideLayer = () => {
+  if (layer.value) {
+    layer.value.style.opacity = '0'
+  } else {
+    console.warn('layer not yet mounted')
+  }
+}
 
-//   nextPageAnimation()
+const nextPageAnimation = () => {
+  const img = backgroundImg.value
+  const btn = playBtn.value
 
-//   setTimeout(() => {
-//     router.replace(`/${quizName}/choose-quiz-mode`)
-//   }, 200)
-// }
+  if (img) {
+    img.style.transition = 'left 1s ease'
+    // img.style.transitionDelay = '0.5s'
+    img.style.left = '-150vw'
+  }
+
+  if (btn) {
+    btn.style.transition = 'opacity 0.3s ease'
+    btn.style.transitionDelay = '0.7s'
+    btn.style.opacity = '0'
+  }
+}
 
 const play = () => {
   nextPageAnimation()
   setTimeout(() => {
     router.replace(`/choose-quiz-mode`)
-  }, 200)
+  }, 1100)
 }
 </script>
 
 <template>
-  <div class="home-wrapper">
+  <div ref="homeWrapper" class="home-wrapper">
     <div class="background">
       <img
         ref="backgroundImg"
@@ -133,29 +98,18 @@ const play = () => {
 "
       />
     </div>
-    <button @click="play()" id="play-btn">Play</button>
-    <!-- <div ref="quizzesWrapper" class="quizzes-wrapper"> -->
-    <!-- <h1 ref="question">
-        Which quiz
-        <span class="line-break"> </span>
-        are you taking today?
-      </h1>
-      <QuizButtons /> -->
-    <!-- <div @click="chooseQuiz('capitals')" :class="['quiz', { disabled: buttonsDisabled }]">
-        Capitals
-      </div>
-      <div @click="chooseQuiz('countries')" :class="['quiz', { disabled: buttonsDisabled }]">
-        Continents
-      </div>
-      <div @click="chooseQuiz('population')" :class="['quiz', { disabled: buttonsDisabled }]">
-        Population
-      </div>
-      <div @click="chooseQuiz('language')" :class="['quiz', { disabled: buttonsDisabled }]">
-        Language
-      </div> -->
-    <!-- quizzes wrapper -->
-    <!-- </div> -->
+    <button
+      ref="playBtn"
+      @click="play()"
+      @mouseenter="displayLayer()"
+      @mouseleave="hideLayer"
+      id="play-btn"
+    >
+      Play
+    </button>
   </div>
+
+  <div ref="layer" id="layer"></div>
 </template>
 
 <style scoped>
@@ -163,14 +117,10 @@ const play = () => {
   position: relative;
 
   display: flex;
-  justify-content: space-between;
+  /* justify-content: center; */
   align-items: center;
-  gap: 10vh;
-
-  min-height: 100vh;
 
   background-color: #2f4e9f;
-
   height: 100vh;
   width: 100vw;
 
@@ -178,7 +128,6 @@ const play = () => {
 }
 
 .background {
-  position: relative;
   height: 100%;
 }
 
@@ -190,106 +139,67 @@ img {
   bottom: 0;
 }
 
-/* .quizzes-wrapper {
-  position: absolute;
-
-  right: 0;
-
-  height: 100%;
-  width: 0;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2vw;
-
-  background-color: #749cd4;
-  border-left: 0.5px #f1e2d6 solid;
-} */
-
-/* @import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap'); */
-/* h1 {
-  z-index: 10;
-
-  opacity: 0;
-
-  text-align: center;
-  font-style: italic;
-  font-weight: 200;
-  color: #f1e2d6;
-
-  width: 65vw;
-
-  margin-bottom: 2vh;
-
-} */
-
-/* .line-break {
-  display: none;
-}
-
-.quiz {
-  z-index: 10;
-
-  opacity: 0;
-
-  color: black;
-  background-color: #f1e2d6;
-
-  border-radius: 25px;
-
-  width: 12ch;
-  padding: 1rem 2rem;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  text-align: center;
-
-  cursor: pointer;
-} */
-
-/* .quiz:hover {
-  color: white;
-  background-color: #fab662;
-}
-
-.quiz.disabled {
-  pointer-events: none;
-  user-select: none;
-  cursor: not-allowed;
-} */
-
-/* RESPONSIVE FONT MANAGEMENT */
-button {
-  font-size: clamp(2rem, 2vw + 1.4vh, 5rem);
-}
-
 #play-btn {
-  padding: 1rem 2rem;
-  margin-right: 10vw;
+  /* position: absolute; */
+  margin-left: 60vw;
+  padding: 1.7rem 4rem;
 
   font-weight: 800;
   color: white;
 
   background-color: #fab662;
 
-  border: 1px solid #f1e2d6;
-  border-radius: clamp(25px, 5vw, 48px);
+  border: 5px solid #f1e2d6;
+  border-radius: 50px;
 
   cursor: pointer;
 
   z-index: 10;
+  opacity: 0;
 
-  /* transition: all 0.5s ease; */
+  /* transition: all 5s ease; */
 }
 
-/* @media (max-width: 768px) {
-  .line-break {
-    display: block; 
-    width: 100%;
+#layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  height: 100vh;
+  width: 100vw;
+  background-color: white;
+
+  opacity: 0;
+  z-index: 5;
+
+  transition: opacity 0.3s ease;
+}
+
+/* RESPONSIVE FONT MANAGEMENT */
+button {
+  font-size: clamp(2rem, 3vw + 2.5vh, 4rem);
+}
+
+@media (max-width: 1024px) {
+  #play-btn {
+    padding: 1.7rem 3.2rem;
   }
-} */
+
+  img {
+    opacity: 0.8;
+  }
+}
+
+@media (max-width: 768px) {
+  #play-btn {
+    margin-left: 60vw;
+  }
+}
+
+@media (max-width: 430px) {
+  #play-btn {
+    padding: 0.7rem 1.8rem;
+    margin-left: 10vw;
+  }
+}
 </style>
